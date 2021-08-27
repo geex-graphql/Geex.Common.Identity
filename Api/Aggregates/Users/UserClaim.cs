@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Geex.Common.Identity.Api.Aggregates.Users
 {
     public class UserClaim

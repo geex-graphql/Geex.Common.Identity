@@ -22,7 +22,7 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users
             return true;
         }
 
-        public async Task<bool> UpdateProfile([Service] IMediator mediator, UploadProfileRequest input)
+        public async Task<bool> EditUser([Service] IMediator mediator, EditUserRequest input)
         {
             var result = await mediator.Send(input);
             return true;
