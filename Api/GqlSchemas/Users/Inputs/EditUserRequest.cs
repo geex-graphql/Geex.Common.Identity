@@ -11,12 +11,12 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users.Inputs
 {
     public class EditUserRequest : IRequest<Unit>
     {
-        public ObjectId Id { get; set; }
+        public string Id { get; set; }
         public bool IsEnable { get; set; }
         public string? Email { get; set; }
         public string[] RoleNames { get; set; }
-        public string[] OrgIds { get; set; }
-        public string Avatar { get; set; }
+        public string[] OrgCodes { get; set; }
+        public string AvatarFileId { get; set; }
         public UserClaim[] Claims { get; set; }
         public string? PhoneNumber { get; set; }
         public string UserName { get; set; }

@@ -1,0 +1,28 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using Autofac;
+
+using Geex.Common.Gql.Roots;
+using Geex.Common.Identity.Api.GqlSchemas.Roles.Inputs;
+using Geex.Common.Identity.Core.Aggregates.Orgs;
+
+using HotChocolate;
+using MediatR;
+using MongoDB.Entities;
+
+namespace Geex.Common.Identity.Api.GqlSchemas.Orgs
+{
+    public class OrgMutation : MutationTypeExtension<OrgMutation>
+    {
+       public async Task<Org> CreateOrg(
+            [Service] IMediator mediator,
+            CreateOrgInput input)
+        {
+            return await mediator.Send(input);
+        }
+    }
+}

@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Geex.Common.Identity.Api.Aggregates.Users;
+using Geex.Common.Identity.Core.Aggregates.Users;
 
 namespace Geex.Common.Identity.Api.Aggregates.Roles
 {
@@ -14,6 +17,8 @@ namespace Geex.Common.Identity.Api.Aggregates.Roles
         {
             this.Name = name;
         }
+
+        public IQueryable<IUser> Users => DbContext.Queryable<User>().Where(x => x.RoleNames.Contains(this.Name));
 
         public override bool Equals(object obj)
         {

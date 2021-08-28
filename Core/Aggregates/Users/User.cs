@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 
 using Geex.Common.Abstractions.Enumerations;
 using Geex.Common.Authorization.Abstraction;
+using Geex.Common.BlobStorage.Api.Aggregates.BlobObjects;
+using Geex.Common.BlobStorage.Core.Aggregates.BlobObjects;
 using Geex.Common.Identity.Api.Aggregates.Roles;
 using Geex.Common.Identity.Api.Aggregates.Users;
 using Geex.Common.Identity.Api.Aggregates.Users.Events;
@@ -27,11 +29,12 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         public string? Email { get; set; }
         public string Password { get; set; }
         public UserClaim[] Claims { get; set; } = Enumerable.Empty<UserClaim>().ToArray();
-        public string[] OrgIds { get; set; } = Enumerable.Empty<string>().ToArray();
+        public string[] OrgCodes { get; set; } = Enumerable.Empty<string>().ToArray();
         public string[] RoleNames { get; set; } = Enumerable.Empty<string>().ToArray();
-        public string Avatar => this.Claims.FirstOrDefault(x => x.ClaimType == GeexClaimType.Avatar)?.ClaimValue;
-        public IQueryable<Role> Roles => DbContext.Queryable<Role>().Where(x => this.RoleIds.Contains(x.Id));
-        public string[] RoleIds { get; set; } = Enumerable.Empty<string>().ToArray();
+        public IBlobObject AvatarFile => DbContext.Find<BlobObject>().OneAsync(this.AvatarFileId).Result;
+        public string AvatarFileId { get; set; }
+
+        public IQueryable<Role> Roles => DbContext.Queryable<Role>().Where(x => this.RoleNames.Contains(x.Name));
         public List<AppPermission> AuthorizedPermissions { get; set; }
         protected User()
         {
@@ -56,7 +59,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         }
         public async Task AssignRoles(List<Role> roles)
         {
-            this.RoleIds.RemoveAll(this.Roles.Select(x => x.Id));
+            this.RoleNames.RemoveAll(this.Roles.Select(x => x.Name));
             await roles.SaveAsync((this as IEntity).DbContext?.Session);
             this.AddDomainEvent(new UserRoleChangedEvent(this.Id, roles.Select(x => x.Id).ToList()));
         }
