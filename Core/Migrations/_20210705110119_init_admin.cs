@@ -48,6 +48,7 @@ namespace Geex.Core.Authentication.Migrations
                 new Org("3","3"),
                 new Org("1.1","1.1"),
                 new Org("1.1.1","1.1.1"),
+                new Org("1.1.2","1.1.2"),
                 new Org("2.1","2.1"),
             };
             dbContext.Attach(orgs);
