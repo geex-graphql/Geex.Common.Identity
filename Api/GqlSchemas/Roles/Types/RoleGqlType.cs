@@ -1,5 +1,7 @@
 ﻿using System.Text.RegularExpressions;
+
 using Geex.Common.Identity.Api.Aggregates.Roles;
+
 using HotChocolate;
 using HotChocolate.Types;
 
@@ -13,6 +15,7 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Roles.Types
             descriptor.ConfigEntity();
             //descriptor.Field(x => x.Users).Type<ListType<UserType>>().Resolve(x=>x.ToString());
             descriptor.Field(x => x.Name);
+            descriptor.Field(x => x.Users);
             base.Configure(descriptor);
         }
     }
