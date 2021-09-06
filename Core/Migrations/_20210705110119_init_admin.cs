@@ -27,7 +27,6 @@ namespace Geex.Core.Authentication.Migrations
                 RoleNames = new[] { "admin" }
             };
             dbContext.Attach(user);
-            await user.SaveAsync();
             var roles = new List<Role>()
             {
                 new Role("admin")
@@ -40,19 +39,6 @@ namespace Geex.Core.Authentication.Migrations
                 }
             };
             dbContext.Attach(roles);
-            await roles.SaveAsync();
-            var orgs = new List<Org>()
-            {
-                new Org("1","1"),
-                new Org("2","2"),
-                new Org("3","3"),
-                new Org("1.1","1.1"),
-                new Org("1.1.1","1.1.1"),
-                new Org("1.1.2","1.1.2"),
-                new Org("2.1","2.1"),
-            };
-            dbContext.Attach(orgs);
-            await orgs.SaveAsync();
         }
     }
 }
