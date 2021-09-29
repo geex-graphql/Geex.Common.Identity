@@ -45,7 +45,7 @@ namespace Geex.Common.Identity.Core
         public async Task<Unit> Handle(AssignRoleRequest request, CancellationToken cancellationToken)
         {
             var user = await DbContext.Find<User>().OneAsync(request.UserId.ToString(), cancellationToken);
-            var roles = await DbContext.Find<Role>().ManyAsync(x => request.Roles.Contains(x.Id), cancellationToken);
+            var roles = await DbContext.Find<Role>().ManyAsync(x => request.Roles.Contains(x.Name), cancellationToken);
             await user.AssignRoles(roles);
             return Unit.Value;
         }

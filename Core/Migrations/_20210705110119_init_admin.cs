@@ -24,7 +24,7 @@ namespace Geex.Core.Authentication.Migrations
             var user = new User(dbContext.ServiceProvider.GetService<IUserCreationValidator>(), dbContext.ServiceProvider.GetService<IPasswordHasher<IUser>>(), "admin@fms.kuanfang.com", "admin", "admin")
             {
                 Id = "000000000000000000000001",
-                RoleNames = new[] { "admin" }
+                RoleNames = new List<string> { "admin" }
             };
             dbContext.Attach(user);
             var roles = new List<Role>()

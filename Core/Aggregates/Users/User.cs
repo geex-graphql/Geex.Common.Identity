@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Geex.Common.Abstractions.Enumerations;
-using Geex.Common.Authorization.Abstraction;
 using Geex.Common.BlobStorage.Api.Aggregates.BlobObjects;
 using Geex.Common.BlobStorage.Core.Aggregates.BlobObjects;
 using Geex.Common.Identity.Api.Aggregates.Roles;
@@ -29,13 +28,12 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         public string? Email { get; set; }
         public string Password { get; set; }
         public UserClaim[] Claims { get; set; } = Enumerable.Empty<UserClaim>().ToArray();
-        public string[] OrgCodes { get; set; } = Enumerable.Empty<string>().ToArray();
-        public string[] RoleNames { get; set; } = Enumerable.Empty<string>().ToArray();
+        public List<string> OrgCodes { get; set; } = Enumerable.Empty<string>().ToList();
+        public List<string> RoleNames { get; set; } = Enumerable.Empty<string>().ToList();
         public IBlobObject AvatarFile => DbContext.Find<BlobObject>().OneAsync(this.AvatarFileId).Result;
         public string AvatarFileId { get; set; }
 
         public IQueryable<Role> Roles => DbContext.Queryable<Role>().Where(x => this.RoleNames.Contains(x.Name));
-        public List<AppPermission> AuthorizedPermissions { get; set; }
         protected User()
         {
         }
@@ -59,9 +57,8 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         }
         public async Task AssignRoles(List<Role> roles)
         {
-            this.RoleNames.RemoveAll(this.Roles.Select(x => x.Name));
-            await roles.SaveAsync((this as IEntity).DbContext?.Session);
-            this.AddDomainEvent(new UserRoleChangedEvent(this.Id, roles.Select(x => x.Id).ToList()));
+            this.RoleNames = roles.Select(x => x.Name).ToList();
+            this.AddDomainEvent(new UserRoleChangedEvent(this.Id, roles.Select(x => x.Name).ToList()));
         }
     }
 }

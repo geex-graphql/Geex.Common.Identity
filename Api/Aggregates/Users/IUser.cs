@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 using Geex.Common.BlobStorage.Api.Aggregates.BlobObjects;
 using Geex.Common.Identity.Api.Aggregates.Roles;
@@ -14,12 +15,12 @@ namespace Geex.Common.Identity.Api.Aggregates.Users
         string UserName { get; set; }
         public bool IsEnable { get; set; }
         string Email { get; set; }
-        string[] RoleNames { get; }
+        List<string> RoleNames { get; }
         IBlobObject AvatarFile { get; }
         string AvatarFileId { get; set; }
         UserClaim[] Claims { get; set; }
         public IQueryable<Role> Roles => DbContext.Queryable<Role>().Where(x => this.RoleNames.Contains(x.Id));
         IQueryable<Org> Orgs => DbContext.Queryable<Org>().Where(x => this.OrgCodes.Contains(x.Code));
-        string[] OrgCodes { get; set; }
+        List<string> OrgCodes { get; set; }
     }
 }
