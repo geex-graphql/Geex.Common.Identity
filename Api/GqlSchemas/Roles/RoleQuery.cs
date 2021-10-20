@@ -20,7 +20,7 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Roles
     {
         protected override void Configure(IObjectTypeDescriptor<RoleQuery> descriptor)
         {
-            descriptor.ResolveMethod(x => x.Roles(default))
+            descriptor.ConfigQuery(x => x.Roles(default))
             .UseOffsetPaging<RoleGqlType>()
             .UseFiltering<Role>(x =>
             {

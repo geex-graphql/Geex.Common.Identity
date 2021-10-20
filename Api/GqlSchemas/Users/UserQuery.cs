@@ -14,7 +14,7 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users
     {
         protected override void Configure(IObjectTypeDescriptor<UserQuery> descriptor)
         {
-            descriptor.ResolveMethod(x => x.Users(default))
+            descriptor.ConfigQuery(x => x.Users(default))
             .UseOffsetPaging<UserGqlType>()
             .UseFiltering<IUser>(x =>
             {
