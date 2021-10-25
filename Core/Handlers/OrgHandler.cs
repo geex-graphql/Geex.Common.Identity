@@ -1,23 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
 using Geex.Common.Abstraction.Gql.Inputs;
-using Geex.Common.Abstractions.Enumerations;
 using Geex.Common.Identity.Api.GqlSchemas.Roles.Inputs;
 using Geex.Common.Identity.Core.Aggregates.Orgs;
-
-using Mediator;
-
 using MediatR;
-
-using Microsoft.AspNetCore.Identity;
-
 using MongoDB.Entities;
 
-namespace Geex.Common.Identity.Core
+namespace Geex.Common.Identity.Core.Handlers
 {
     public class OrgHandler :
         IRequestHandler<QueryInput<Org>, IQueryable<Org>>,

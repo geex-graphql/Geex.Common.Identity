@@ -1,24 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
 using Geex.Common.Abstraction.Gql.Inputs;
-using Geex.Common.Abstractions.Enumerations;
-using Geex.Common.Identity.Api.Aggregates.Roles;
 using Geex.Common.Identity.Api.Aggregates.Roles;
 using Geex.Common.Identity.Api.GqlSchemas.Roles.Inputs;
-
-using Mediator;
-
 using MediatR;
-
-using Microsoft.AspNetCore.Identity;
-
 using MongoDB.Entities;
 
-namespace Geex.Common.Identity.Core
+namespace Geex.Common.Identity.Core.Handlers
 {
     public class RoleHandler :
         IRequestHandler<QueryInput<Role>, IQueryable<Role>>,
