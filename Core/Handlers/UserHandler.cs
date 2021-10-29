@@ -5,6 +5,7 @@ using Geex.Common.Abstraction.Gql.Inputs;
 using Geex.Common.Identity.Api.Aggregates.Roles;
 using Geex.Common.Identity.Api.Aggregates.Users;
 using Geex.Common.Identity.Api.GqlSchemas.Users.Inputs;
+using Geex.Common.Identity.Core.Aggregates.Orgs;
 using Geex.Common.Identity.Core.Aggregates.Users;
 using Mediator;
 using MediatR;
@@ -13,7 +14,9 @@ using MongoDB.Entities;
 
 namespace Geex.Common.Identity.Core.Handlers
 {
-    public class UserHandler : IRequestHandler<AssignRoleRequest, Unit>,
+    public class UserHandler :
+        IRequestHandler<AssignRoleRequest, Unit>,
+        IRequestHandler<AssignOrgRequest, Unit>,
         IRequestHandler<EditUserRequest, Unit>,
         IRequestHandler<RegisterUserRequest, IUser>,
         IRequestHandler<QueryInput<IUser>, IQueryable<IUser>>
@@ -72,6 +75,18 @@ namespace Geex.Common.Identity.Core.Handlers
         public async Task<IQueryable<IUser>> Handle(QueryInput<IUser> request, CancellationToken cancellationToken)
         {
             return DbContext.Queryable<User>();
+        }
+
+        /// <summary>Handles a request</summary>
+        /// <param name="request">The request</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Response from the request</returns>
+        public async Task<Unit> Handle(AssignOrgRequest request, CancellationToken cancellationToken)
+        {
+            var user = await DbContext.Find<User>().OneAsync(request.UserId.ToString(), cancellationToken);
+            var orgs = await DbContext.Find<Org>().ManyAsync(x => request.Orgs.Contains(x.Code), cancellationToken);
+            await user.AssignOrgs(orgs);
+            return Unit.Value;
         }
     }
 }

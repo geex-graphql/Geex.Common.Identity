@@ -7,40 +7,28 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Geex.Common.Abstractions;
+
 using MongoDB.Driver;
 using MongoDB.Entities;
 using MongoDB.Entities.Interceptors;
 
 namespace Geex.Common.Identity.Core
 {
-    public class OrgDataFilter : DataFilter<IOrgFilteredEntity>
+    public class OrgDataFilter : ExpressionDataFilter<IOrgFilteredEntity>
     {
-        public LazyFactory<ClaimsPrincipal> ClaimsPrincipal { get; }
-
-        public override FilterDefinition<IOrgFilteredEntity> Apply(FilterDefinition<IOrgFilteredEntity> filter)
+        private static bool OrgFilterMethod(LazyFactory<ClaimsPrincipal> x, IOrgFilteredEntity y)
         {
-            var ownedOrgs = ClaimsPrincipal.Value.FindOrgIds();
-            if (ownedOrgs?.Any() == true)
-            {
-                Expression<Func<IOrgFilteredEntity, bool>> expression = (x) => ownedOrgs.Intersect(x.BelongedOrgs).Any();
-                filter &= expression;
-            }
-            else
-            {
-                //没有组织架构的用户直接不返回数据
-                filter = new ExpressionFilterDefinition<IOrgFilteredEntity>(x => false);
-            }
-            return filter;
+            var ownedOrgs = x.Value?.FindOrgIds();
+            return ownedOrgs?.Any() == true && ownedOrgs.Intersect(y.OrgIds ?? new List<string>()).Any();
         }
 
-        public OrgDataFilter(LazyFactory<ClaimsPrincipal> claimsPrincipal)
+        public OrgDataFilter(LazyFactory<ClaimsPrincipal> claimsPrincipal) : base(entity => OrgFilterMethod(claimsPrincipal, entity), true)
         {
-            ClaimsPrincipal = claimsPrincipal;
         }
     }
 
     public interface IOrgFilteredEntity : IEntity
     {
-        public List<string> BelongedOrgs { get; set; }
+        public List<string> OrgIds { get; }
     }
 }

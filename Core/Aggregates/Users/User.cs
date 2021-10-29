@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Geex.Common.Abstractions.Enumerations;
 using Geex.Common.BlobStorage.Api.Aggregates.BlobObjects;
 using Geex.Common.BlobStorage.Core.Aggregates.BlobObjects;
+using Geex.Common.Identity.Api.Aggregates.Orgs.Events;
 using Geex.Common.Identity.Api.Aggregates.Roles;
 using Geex.Common.Identity.Api.Aggregates.Users;
 using Geex.Common.Identity.Api.Aggregates.Users.Events;
@@ -59,6 +60,12 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         {
             this.RoleNames = roles.Select(x => x.Name).ToList();
             this.AddDomainEvent(new UserRoleChangedEvent(this.Id, roles.Select(x => x.Name).ToList()));
+        }
+
+        public async Task AssignOrgs(List<Org> orgs)
+        {
+            this.OrgCodes = orgs.Select(x => x.Code).ToList();
+            this.AddDomainEvent(new UserOrgChangedEvent(this.Id, orgs.Select(x => x.Code).ToList()));
         }
     }
 }
