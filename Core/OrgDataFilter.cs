@@ -22,8 +22,9 @@ namespace Geex.Common.Identity.Core
             return ownedOrgs?.Any() == true && ownedOrgs.Intersect(y.OrgIds ?? new List<string>()).Any();
         }
 
-        public OrgDataFilter(LazyFactory<ClaimsPrincipal> claimsPrincipal) : base(entity => OrgFilterMethod(claimsPrincipal, entity), true)
+        public OrgDataFilter(LazyFactory<ClaimsPrincipal> claimsPrincipal) : base(null, PredicateBuilder.New<IOrgFilteredEntity>(entity => OrgFilterMethod(claimsPrincipal, entity)))
         {
+
         }
     }
 
