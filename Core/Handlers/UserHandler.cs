@@ -1,15 +1,21 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Geex.Common.Abstraction.Gql.Inputs;
 using Geex.Common.Identity.Api.Aggregates.Roles;
 using Geex.Common.Identity.Api.Aggregates.Users;
 using Geex.Common.Identity.Api.GqlSchemas.Users.Inputs;
 using Geex.Common.Identity.Core.Aggregates.Orgs;
 using Geex.Common.Identity.Core.Aggregates.Users;
+
 using Mediator;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Identity;
+
+using MongoDB.Bson;
 using MongoDB.Entities;
 
 namespace Geex.Common.Identity.Core.Handlers
@@ -39,9 +45,12 @@ namespace Geex.Common.Identity.Core.Handlers
         /// <returns>Response from the request</returns>
         public async Task<Unit> Handle(AssignRoleRequest request, CancellationToken cancellationToken)
         {
-            var user = await DbContext.Find<User>().OneAsync(request.UserId.ToString(), cancellationToken);
+            var users = await DbContext.Find<User>().ManyAsync(x => request.UserIds.Contains(x.Id), cancellationToken);
             var roles = await DbContext.Find<Role>().ManyAsync(x => request.Roles.Contains(x.Name), cancellationToken);
-            await user.AssignRoles(roles);
+            foreach (var user in users)
+            {
+                await user.AssignRoles(roles);
+            }
             return Unit.Value;
         }
 
@@ -83,9 +92,12 @@ namespace Geex.Common.Identity.Core.Handlers
         /// <returns>Response from the request</returns>
         public async Task<Unit> Handle(AssignOrgRequest request, CancellationToken cancellationToken)
         {
-            var user = await DbContext.Find<User>().OneAsync(request.UserId.ToString(), cancellationToken);
+            var users = await DbContext.Find<User>().ManyAsync(x => request.UserIds.Contains(x.Id), cancellationToken);
             var orgs = await DbContext.Find<Org>().ManyAsync(x => request.Orgs.Contains(x.Code), cancellationToken);
-            await user.AssignOrgs(orgs);
+            foreach (var user in users)
+            {
+                await user.AssignOrgs(orgs);
+            }
             return Unit.Value;
         }
     }
