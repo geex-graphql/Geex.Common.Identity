@@ -1,11 +1,14 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+
 using Geex.Common.Abstraction.Gql.Inputs;
 using Geex.Common.Gql.Roots;
 using Geex.Common.Identity.Api.Aggregates.Users;
 using Geex.Common.Identity.Api.GqlSchemas.Users.Types;
+
 using HotChocolate;
 using HotChocolate.Types;
+
 using MediatR;
 
 namespace Geex.Common.Identity.Api.GqlSchemas.Users
@@ -22,6 +25,8 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users
                 x.Field(y => y.UserName);
                 x.Field(y => y.IsEnable);
                 x.Field(y => y.PhoneNumber);
+                x.Field(y => y.OrgCodes);
+                x.Field(y => y.RoleNames);
                 x.Field(y => y.Id);
             })
             ;
