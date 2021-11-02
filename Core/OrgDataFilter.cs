@@ -16,13 +16,7 @@ namespace Geex.Common.Identity.Core
 {
     public class OrgDataFilter : ExpressionDataFilter<IOrgFilteredEntity>
     {
-        private static bool OrgFilterMethod(LazyFactory<ClaimsPrincipal> x, IOrgFilteredEntity y)
-        {
-            var ownedOrgs = x.Value?.FindOrgIds();
-            return ownedOrgs?.Any() == true && ownedOrgs.Intersect(y.OrgIds ?? new List<string>()).Any();
-        }
-
-        public OrgDataFilter(LazyFactory<ClaimsPrincipal> claimsPrincipal) : base(null, PredicateBuilder.New<IOrgFilteredEntity>(entity => OrgFilterMethod(claimsPrincipal, entity)))
+        public OrgDataFilter(LazyFactory<ClaimsPrincipal> claimsPrincipal) : base(PredicateBuilder.New<IOrgFilteredEntity>(entity => claimsPrincipal.Value.FindOrgCodes().Contains(entity.OrgCode)), null)
         {
 
         }
@@ -30,6 +24,6 @@ namespace Geex.Common.Identity.Core
 
     public interface IOrgFilteredEntity : IEntity
     {
-        public List<string> OrgIds { get; }
+        public string OrgCode { get; }
     }
 }
