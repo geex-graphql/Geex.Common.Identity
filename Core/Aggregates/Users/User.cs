@@ -38,7 +38,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         protected User()
         {
         }
-        public User(IUserCreationValidator userCreationValidator, IPasswordHasher<IUser> passwordHasher, string phoneOrEmail, string password, string username)
+        public User(IUserCreationValidator userCreationValidator, IPasswordHasher<IUser> passwordHasher, string phoneOrEmail, string password)
         : this()
         {
             if (phoneOrEmail.IsValidEmail())
@@ -47,7 +47,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
                 PhoneNumber = phoneOrEmail;
             else
                 throw new Exception("invalid input for phoneOrEmail");
-            this.UserName = username;
+            this.UserName = phoneOrEmail;
             userCreationValidator.Check(this);
             Password = passwordHasher.HashPassword(this, password);
         }
@@ -66,6 +66,12 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         {
             this.OrgCodes = orgs.Select(x => x.Code).ToList();
             this.AddDomainEvent(new UserOrgChangedEvent(this.Id, orgs.Select(x => x.Code).ToList()));
+        }
+
+        public User SetPassword(string? password)
+        {
+            Password = ServiceProvider.GetService<IPasswordHasher<User>>().HashPassword(this, password);
+            return this;
         }
     }
 }

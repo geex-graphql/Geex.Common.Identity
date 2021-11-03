@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,6 +24,7 @@ namespace Geex.Common.Identity.Core.Handlers
     public class UserHandler :
         IRequestHandler<AssignRoleRequest, Unit>,
         IRequestHandler<AssignOrgRequest, Unit>,
+        IRequestHandler<CreateUserRequest, Unit>,
         IRequestHandler<EditUserRequest, Unit>,
         IRequestHandler<RegisterUserRequest, IUser>,
         IRequestHandler<QueryInput<IUser>, IQueryable<IUser>>
@@ -61,8 +63,21 @@ namespace Geex.Common.Identity.Core.Handlers
         public async Task<Unit> Handle(EditUserRequest request, CancellationToken cancellationToken)
         {
             var user = await DbContext.Find<User>().OneAsync(request.Id.ToString(), cancellationToken);
-            request.SetEntity(user);
-            await user.SaveAsync(cancellation: cancellationToken);
+            request.SetEntity(user, nameof(User.Password));
+            user.SetPassword(request.Password);
+            return Unit.Value;
+        }
+
+        /// <summary>Handles a request</summary>
+        /// <param name="request">The request</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Response from the request</returns>
+        public async Task<Unit> Handle(CreateUserRequest request, CancellationToken cancellationToken)
+        {
+            var identifier = request.PhoneNumber.IsNullOrEmpty() ? request.Email : request.PhoneNumber;
+            var user = new User(this.UserCreationValidator, this.PasswordHasher, identifier, request.Password);
+            request.SetEntity(user, nameof(User.Password));
+            DbContext.Attach(user);
             return Unit.Value;
         }
 
@@ -72,8 +87,7 @@ namespace Geex.Common.Identity.Core.Handlers
         /// <returns>Response from the request</returns>
         public async Task<IUser> Handle(RegisterUserRequest request, CancellationToken cancellationToken)
         {
-            var user = new User(UserCreationValidator, PasswordHasher, request.PhoneOrEmail, request.Password, request.UserName);
-            await user.SaveAsync(cancellationToken);
+            var user = new User(UserCreationValidator, PasswordHasher, request.PhoneOrEmail, request.Password);
             return user;
         }
 

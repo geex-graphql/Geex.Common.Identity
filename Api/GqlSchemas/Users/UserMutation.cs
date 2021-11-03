@@ -33,6 +33,10 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users
             var result = await mediator.Send(input);
             return true;
         }
-
+        public async Task<bool> CreateUser([Service] IMediator mediator, CreateUserRequest input)
+        {
+            var result = await mediator.Send(input);
+            return true;
+        }
     }
 }
