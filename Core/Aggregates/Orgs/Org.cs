@@ -1,11 +1,9 @@
 using System.Linq;
 using System.Text.RegularExpressions;
-
+using Geex.Common.Abstraction;
+using Geex.Common.Abstraction.Storage;
 using Geex.Common.Identity.Core.Aggregates.Users;
 
-using MongoDB.Entities;
-
-using Entity = MongoDB.Entities.Entity;
 
 namespace Geex.Common.Identity.Core.Aggregates.Orgs
 {

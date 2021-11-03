@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Geex.Common.Abstraction;
+using Geex.Common.Abstraction.Storage;
 using Geex.Common.Identity.Api.Aggregates.Users;
 using Geex.Common.Identity.Core.Aggregates.Users;
 
@@ -9,7 +11,7 @@ namespace Geex.Common.Identity.Api.Aggregates.Roles
     /// <summary>
     /// role为了方便和string的相互转化, 采用class的形式
     /// </summary>
-    public class Role : Common.Abstractions.Entity
+    public class Role : Entity
     {
         public string Name { get; set; }
 

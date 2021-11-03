@@ -17,11 +17,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 using MongoDB.Entities;
 
-using Entity = Geex.Common.Abstractions.Entity;
+using Entity = Geex.Common.Abstraction.Storage.Entity;
 
 namespace Geex.Common.Identity.Core.Aggregates.Users
 {
-    public partial class User : Entity, IUser
+    public partial class User : Abstraction.Storage.Entity, IUser
     {
         public string? PhoneNumber { get; set; }
         public bool IsEnable { get; set; }
