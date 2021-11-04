@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -70,7 +71,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
 
         public User SetPassword(string? password)
         {
-            Password = ServiceProvider.GetService<IPasswordHasher<User>>().HashPassword(this, password);
+            Password = ServiceProvider.GetService<IPasswordHasher<IUser>>().HashPassword(this, password);
             return this;
         }
     }
