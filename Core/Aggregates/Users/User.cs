@@ -71,7 +71,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
 
         public User SetPassword(string? password)
         {
-            Password = ServiceProvider.GetService<IPasswordHasher<IUser>>().HashPassword(this, password);
+            Password = ServiceProvider.GetService<IPasswordHasher<User>>().HashPassword(this, password);
             return this;
         }
     }
