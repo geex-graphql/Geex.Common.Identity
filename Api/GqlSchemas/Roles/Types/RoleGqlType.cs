@@ -16,6 +16,7 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Roles.Types
             //descriptor.Field(x => x.Users).Type<ListType<UserType>>().Resolve(x=>x.ToString());
             descriptor.Field(x => x.Name);
             descriptor.Field(x => x.Users);
+            descriptor.Field(x => x.Permissions);
             base.Configure(descriptor);
         }
     }

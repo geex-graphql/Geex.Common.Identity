@@ -63,7 +63,9 @@ namespace Geex.Common.Identity.Core.Handlers
         public async Task<Unit> Handle(EditUserRequest request, CancellationToken cancellationToken)
         {
             var user = await DbContext.Find<User>().OneAsync(request.Id.ToString(), cancellationToken);
-            request.SetEntity(user, nameof(User.Password));
+            request.SetEntity(user, nameof(User.Password), nameof(user.RoleNames));
+            await user.AssignRoles(request.RoleNames);
+            await user.AssignOrgs(request.OrgCodes);
             user.SetPassword(request.Password);
             return Unit.Value;
         }

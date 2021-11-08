@@ -23,6 +23,6 @@ namespace Geex.Common.Identity.Api.Aggregates.Users
         public IQueryable<Role> Roles => DbContext.Queryable<Role>().Where(x => this.RoleNames.Contains(x.Id));
         IQueryable<Org> Orgs => DbContext.Queryable<Org>().Where(x => this.OrgCodes.Contains(x.Code));
         List<string> OrgCodes { get; set; }
-        List<string> Permissions => DbContext.ServiceProvider.GetService<IMediator>().Send(new GetUserPermissionsRequest(this.Id)).Result.ToList();
+        List<string> Permissions => DbContext.ServiceProvider.GetService<IMediator>().Send(new GetSubjectPermissionsRequest(this.Id)).Result.ToList();
     }
 }

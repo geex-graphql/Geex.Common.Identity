@@ -69,9 +69,21 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
             this.AddDomainEvent(new UserOrgChangedEvent(this.Id, orgs.Select(x => x.Code).ToList()));
         }
 
+        public async Task AssignRoles(List<string> roles)
+        {
+            this.RoleNames = roles.ToList();
+            this.AddDomainEvent(new UserRoleChangedEvent(this.Id, roles.ToList()));
+        }
+
+        public async Task AssignOrgs(List<string> orgs)
+        {
+            this.OrgCodes = orgs.ToList();
+            this.AddDomainEvent(new UserOrgChangedEvent(this.Id, orgs.ToList()));
+        }
+
         public User SetPassword(string? password)
         {
-            Password = ServiceProvider.GetService<IPasswordHasher<User>>().HashPassword(this, password);
+            Password = ServiceProvider.GetService<IPasswordHasher<IUser>>().HashPassword(this, password);
             return this;
         }
     }
