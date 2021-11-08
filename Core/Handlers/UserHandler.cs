@@ -66,7 +66,10 @@ namespace Geex.Common.Identity.Core.Handlers
             request.SetEntity(user, nameof(User.Password), nameof(user.RoleNames));
             await user.AssignRoles(request.RoleNames);
             await user.AssignOrgs(request.OrgCodes);
-            user.SetPassword(request.Password);
+            if (!request.Password.IsNullOrEmpty())
+            {
+                user.SetPassword(request.Password);
+            }
             return Unit.Value;
         }
 
