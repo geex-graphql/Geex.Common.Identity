@@ -17,8 +17,14 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Orgs.Types
             //descriptor.Field(x => x.Users).Type<ListType<UserType>>().Resolve(x=>x.ToString());
             descriptor.Field(x => x.Code);
             descriptor.Field(x => x.Name);
+            descriptor.Field(x => x.OrgType);
+            descriptor.Field(x => x.AllSubOrgCodes);
+            descriptor.Field(x => x.DirectSubOrgCodes);
             descriptor.Field(x => x.AllSubOrgs);
             descriptor.Field(x => x.DirectSubOrgs);
+            descriptor.Field(x => x.ParentOrgCode);
+            descriptor.Field(x => x.AllParentOrgCodes);
+            descriptor.Field(x => x.AllParentOrgs);
             base.Configure(descriptor);
         }
     }
