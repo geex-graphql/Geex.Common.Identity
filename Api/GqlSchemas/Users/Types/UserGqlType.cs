@@ -1,14 +1,15 @@
 ﻿using Geex.Common.Identity.Api.Aggregates.Users;
-
+using Geex.Common.Identity.Core.Aggregates.Users;
 using HotChocolate.Types;
 
 namespace Geex.Common.Identity.Api.GqlSchemas.Users.Types
 {
-    public class UserGqlType : ObjectType<IUser>
+    public class UserGqlType : ObjectType<User>
     {
-        protected override void Configure(IObjectTypeDescriptor<IUser> descriptor)
+        protected override void Configure(IObjectTypeDescriptor<User> descriptor)
         {
             descriptor.BindFieldsImplicitly();
+            descriptor.Implements<InterfaceType<IUser>>();
             descriptor.ConfigEntity();
             //descriptor.Field(x => x.UserName);
             //descriptor.Field(x => x.IsEnable);

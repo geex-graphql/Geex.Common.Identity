@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Geex.Common.Abstraction;
 using Geex.Common.Abstractions.Enumerations;
 using Geex.Common.BlobStorage.Api.Aggregates.BlobObjects;
 using Geex.Common.BlobStorage.Core.Aggregates.BlobObjects;
@@ -12,7 +12,7 @@ using Geex.Common.Identity.Api.Aggregates.Roles;
 using Geex.Common.Identity.Api.Aggregates.Users;
 using Geex.Common.Identity.Api.Aggregates.Users.Events;
 using Geex.Common.Identity.Core.Aggregates.Orgs;
-
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,7 +30,9 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         public string? Email { get; set; }
         public string Password { get; set; }
         public UserClaim[] Claims { get; set; } = Enumerable.Empty<UserClaim>().ToArray();
+        public IQueryable<Org> Orgs => DbContext.Queryable<Org>().Where(x => this.OrgCodes.Contains(x.Code));
         public List<string> OrgCodes { get; set; } = Enumerable.Empty<string>().ToList();
+        public List<string> Permissions => DbContext.ServiceProvider.GetService<IMediator>().Send(new GetSubjectPermissionsRequest(this.Id)).Result.ToList();
         public List<string> RoleNames { get; set; } = Enumerable.Empty<string>().ToList();
         public IBlobObject AvatarFile => DbContext.Find<BlobObject>().OneAsync(this.AvatarFileId).Result;
         public string AvatarFileId { get; set; }
