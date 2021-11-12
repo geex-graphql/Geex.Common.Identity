@@ -20,6 +20,7 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Orgs
     {
         protected override void Configure(IObjectTypeDescriptor<OrgQuery> descriptor)
         {
+            descriptor.AuthorizeWithDefaultName();
             descriptor.ConfigQuery(x => x.Orgs(default))
             .UseOffsetPaging<OrgGqlType>()
             .UseFiltering<Org>(x =>

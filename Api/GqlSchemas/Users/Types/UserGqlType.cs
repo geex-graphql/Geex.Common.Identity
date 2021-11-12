@@ -8,6 +8,7 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users.Types
     {
         protected override void Configure(IObjectTypeDescriptor<User> descriptor)
         {
+            descriptor.AuthorizeFieldsImplicitly();
             descriptor.BindFieldsImplicitly();
             descriptor.Implements<InterfaceType<IUser>>();
             descriptor.ConfigEntity();

@@ -11,6 +11,7 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Roles.Types
     {
         protected override void Configure(IObjectTypeDescriptor<Role> descriptor)
         {
+            descriptor.AuthorizeFieldsImplicitly();
             descriptor.BindFieldsExplicitly();
             descriptor.ConfigEntity();
             //descriptor.Field(x => x.Users).Type<ListType<UserType>>().Resolve(x=>x.ToString());

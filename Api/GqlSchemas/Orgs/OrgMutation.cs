@@ -11,6 +11,7 @@ using Geex.Common.Identity.Api.GqlSchemas.Roles.Inputs;
 using Geex.Common.Identity.Core.Aggregates.Orgs;
 
 using HotChocolate;
+using HotChocolate.Types;
 using MediatR;
 using MongoDB.Entities;
 
@@ -18,7 +19,13 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Orgs
 {
     public class OrgMutation : MutationTypeExtension<OrgMutation>
     {
-       public async Task<Org> CreateOrg(
+        protected override void Configure(IObjectTypeDescriptor<OrgMutation> descriptor)
+        {
+            descriptor.AuthorizeWithDefaultName();
+            base.Configure(descriptor);
+        }
+
+        public async Task<Org> CreateOrg(
             [Service] IMediator mediator,
             CreateOrgInput input)
         {

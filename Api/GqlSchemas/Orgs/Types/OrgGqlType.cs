@@ -12,6 +12,7 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Orgs.Types
     {
         protected override void Configure(IObjectTypeDescriptor<Org> descriptor)
         {
+            descriptor.AuthorizeFieldsImplicitly();
             descriptor.BindFieldsExplicitly();
             descriptor.ConfigEntity();
             //descriptor.Field(x => x.Users).Type<ListType<UserType>>().Resolve(x=>x.ToString());
