@@ -47,8 +47,8 @@ namespace Geex.Common.Identity.Core.Handlers
         /// <returns>Response from the request</returns>
         public async Task<Unit> Handle(AssignRoleRequest request, CancellationToken cancellationToken)
         {
-            var users = await DbContext.Find<User>().ManyAsync(x => request.UserIds.Contains(x.Id), cancellationToken);
-            var roles = await DbContext.Find<Role>().ManyAsync(x => request.Roles.Contains(x.Name), cancellationToken);
+            var users = await Task.FromResult(DbContext.Queryable<User>().Where(x => request.UserIds.Contains(x.Id)).ToList());
+            var roles = await Task.FromResult(DbContext.Queryable<Role>().Where(x => request.Roles.Contains(x.Name)).ToList());
             foreach (var user in users)
             {
                 await user.AssignRoles(roles);
@@ -62,7 +62,7 @@ namespace Geex.Common.Identity.Core.Handlers
         /// <returns>Response from the request</returns>
         public async Task<Unit> Handle(EditUserRequest request, CancellationToken cancellationToken)
         {
-            var user = await DbContext.Find<User>().OneAsync(request.Id.ToString(), cancellationToken);
+            var user = await DbContext.Queryable<User>().OneAsync(request.Id.ToString(), cancellationToken);
             request.SetEntity(user, nameof(User.Password), nameof(user.RoleNames));
             await user.AssignRoles(request.RoleNames);
             await user.AssignOrgs(request.OrgCodes);
@@ -111,8 +111,8 @@ namespace Geex.Common.Identity.Core.Handlers
         /// <returns>Response from the request</returns>
         public async Task<Unit> Handle(AssignOrgRequest request, CancellationToken cancellationToken)
         {
-            var users = await DbContext.Find<User>().ManyAsync(x => request.UserIds.Contains(x.Id), cancellationToken);
-            var orgs = await DbContext.Find<Org>().ManyAsync(x => request.Orgs.Contains(x.Code), cancellationToken);
+            var users = DbContext.Queryable<User>().Where(x => request.UserIds.Contains(x.Id)).ToList();
+            var orgs = DbContext.Queryable<Org>().Where(x => request.Orgs.Contains(x.Code)).ToList();
             foreach (var user in users)
             {
                 await user.AssignOrgs(orgs);

@@ -34,7 +34,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         public List<string> OrgCodes { get; set; } = Enumerable.Empty<string>().ToList();
         public List<string> Permissions => DbContext.ServiceProvider.GetService<IMediator>().Send(new GetSubjectPermissionsRequest(this.Id)).Result.ToList();
         public List<string> RoleNames { get; set; } = Enumerable.Empty<string>().ToList();
-        public IBlobObject AvatarFile => DbContext.Find<BlobObject>().OneAsync(this.AvatarFileId).Result;
+        public IBlobObject AvatarFile => DbContext.Queryable<BlobObject>().OneAsync(this.AvatarFileId).Result;
         public string AvatarFileId { get; set; }
 
         public IQueryable<Role> Roles => DbContext.Queryable<Role>().Where(x => this.RoleNames.Contains(x.Name));
