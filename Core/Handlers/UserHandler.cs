@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Identity;
 using MongoDB.Bson;
 using MongoDB.Entities;
 
+using Volo.Abp;
+
 namespace Geex.Common.Identity.Core.Handlers
 {
     public class UserHandler :
@@ -26,7 +28,7 @@ namespace Geex.Common.Identity.Core.Handlers
         IRequestHandler<AssignOrgRequest, Unit>,
         IRequestHandler<CreateUserRequest, Unit>,
         IRequestHandler<EditUserRequest, Unit>,
-        IRequestHandler<RegisterUserRequest, IUser>,
+        IRequestHandler<ResetUserPasswordRequest>,
         IRequestHandler<QueryInput<IUser>, IQueryable<IUser>>
     {
         public DbContext DbContext { get; }
@@ -66,10 +68,6 @@ namespace Geex.Common.Identity.Core.Handlers
             request.SetEntity(user, nameof(User.Password), nameof(user.RoleNames));
             await user.AssignRoles(request.RoleNames);
             await user.AssignOrgs(request.OrgCodes);
-            if (!request.Password.IsNullOrEmpty())
-            {
-                user.SetPassword(request.Password);
-            }
             return Unit.Value;
         }
 
@@ -84,16 +82,6 @@ namespace Geex.Common.Identity.Core.Handlers
             request.SetEntity(user, nameof(User.Password));
             DbContext.Attach(user);
             return Unit.Value;
-        }
-
-        /// <summary>Handles a request</summary>
-        /// <param name="request">The request</param>
-        /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>Response from the request</returns>
-        public async Task<IUser> Handle(RegisterUserRequest request, CancellationToken cancellationToken)
-        {
-            var user = new User(UserCreationValidator, PasswordHasher, request.PhoneOrEmail, request.Password);
-            return user;
         }
 
         /// <summary>Handles a request</summary>
@@ -117,6 +105,18 @@ namespace Geex.Common.Identity.Core.Handlers
             {
                 await user.AssignOrgs(orgs);
             }
+            return Unit.Value;
+        }
+
+        /// <summary>Handles a request</summary>
+        /// <param name="request">The request</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Response from the request</returns>
+        public async Task<Unit> Handle(ResetUserPasswordRequest request, CancellationToken cancellationToken)
+        {
+            var user = DbContext.Queryable<User>().FirstOrDefault(x => request.UserId == x.Id);
+            Check.NotNull(user, nameof(user), "用户不存在.");
+            user.SetPassword(request.Password);
             return Unit.Value;
         }
     }

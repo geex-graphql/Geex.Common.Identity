@@ -28,5 +28,6 @@ namespace Geex.Common.Identity.Api.Aggregates.Users
         IQueryable<Org> Orgs { get; }
         List<string> OrgCodes { get; set; }
         List<string> Permissions { get; }
+        void ChangePassword(string originPassword, string newPassword);
     }
 }

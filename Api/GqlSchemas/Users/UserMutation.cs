@@ -1,8 +1,11 @@
 ﻿using System.Threading.Tasks;
+
 using Geex.Common.Gql.Roots;
 using Geex.Common.Identity.Api.GqlSchemas.Users.Inputs;
+
 using HotChocolate;
 using HotChocolate.Types;
+
 using MediatR;
 
 namespace Geex.Common.Identity.Api.GqlSchemas.Users
@@ -13,14 +16,6 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users
         {
             descriptor.AuthorizeWithDefaultName();
             base.Configure(descriptor);
-        }
-
-        public async Task<bool> Register(
-            [Service] IMediator mediator,
-            RegisterUserRequest input)
-        {
-            var result = await mediator.Send(input);
-            return true;
         }
 
         public async Task<bool> AssignRoles([Service] IMediator mediator, AssignRoleRequest input)
@@ -41,6 +36,12 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users
             return true;
         }
         public async Task<bool> CreateUser([Service] IMediator mediator, CreateUserRequest input)
+        {
+            var result = await mediator.Send(input);
+            return true;
+        }
+
+        public async Task<bool> ResetUserPassword([Service] IMediator mediator, ResetUserPasswordRequest input)
         {
             var result = await mediator.Send(input);
             return true;

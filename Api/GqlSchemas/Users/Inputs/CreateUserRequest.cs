@@ -8,10 +8,26 @@ using Geex.Common.Identity.Api.Aggregates.Users;
 
 using MediatR;
 
+using Volo.Abp;
+
 namespace Geex.Common.Identity.Api.GqlSchemas.Users.Inputs
 {
-    public class CreateUserRequest : IRequest<Unit>
+    public record CreateUserRequest : IRequest<Unit>
     {
+        [Obsolete]
+        public CreateUserRequest()
+        {
+
+        }
+
+        public CreateUserRequest(string? phoneNumber, string? email, string password)
+        {
+            PhoneNumber = phoneNumber;
+            Email = email;
+            var identifier = phoneNumber.IsNullOrEmpty() ? email : phoneNumber;
+            Check.NotNullOrEmpty(identifier, "phoneOrEmail");
+            Password = password;
+        }
         public string Id { get; set; }
         public bool IsEnable { get; set; }
         public string? Email { get; set; }
