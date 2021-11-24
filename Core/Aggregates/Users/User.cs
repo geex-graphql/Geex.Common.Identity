@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Geex.Common.Abstraction;
+using Geex.Common.Abstractions;
 using Geex.Common.Abstractions.Enumerations;
 using Geex.Common.BlobStorage.Api.Aggregates.BlobObjects;
 using Geex.Common.BlobStorage.Core.Aggregates.BlobObjects;
@@ -38,10 +39,11 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         public List<string> Permissions => DbContext.ServiceProvider.GetService<IMediator>().Send(new GetSubjectPermissionsRequest(this.Id)).Result.ToList();
         public void ChangePassword(string originPassword, string newPassword)
         {
-            if (this.CheckPassword(originPassword))
+            if (!this.CheckPassword(originPassword))
             {
-                this.SetPassword(newPassword);
+                throw new BusinessException(GeexExceptionType.OnPurpose, message: "‘≠√‹¬Î–£—È ß∞‹.");
             }
+            this.SetPassword(newPassword);
         }
 
         public List<string> RoleNames { get; set; } = Enumerable.Empty<string>().ToList();
@@ -68,7 +70,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         public bool CheckPassword(string password)
         {
             var passwordHasher = this.ServiceProvider.GetService<IPasswordHasher<IUser>>();
-            return passwordHasher!.VerifyHashedPassword(this, Password, password) == PasswordVerificationResult.Success;
+            return passwordHasher!.VerifyHashedPassword(this, Password, password) != PasswordVerificationResult.Failed;
         }
         public async Task AssignRoles(List<Role> roles)
         {
