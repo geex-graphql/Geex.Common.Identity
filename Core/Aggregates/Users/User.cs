@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using Geex.Common.Abstraction;
@@ -30,7 +31,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
     {
         public string? PhoneNumber { get; set; }
         public bool IsEnable { get; set; }
-        public string UserName { get; set; }
+        public string Username { get; set; }
         public string? Email { get; set; }
         public string Password { get; set; }
         public UserClaim[] Claims { get; set; } = Enumerable.Empty<UserClaim>().ToArray();
@@ -41,7 +42,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         {
             if (!this.CheckPassword(originPassword))
             {
-                throw new BusinessException(GeexExceptionType.OnPurpose, message: "‘≠√‹¬Î–£—È ß∞‹.");
+                throw new BusinessException(GeexExceptionType.OnPurpose, message: "‘≠ÔøΩÔøΩÔøΩÔøΩ–£ÔøΩÔøΩ ßÔøΩÔøΩ.");
             }
             this.SetPassword(newPassword);
         }
@@ -54,19 +55,27 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         protected User()
         {
         }
-        public User(IUserCreationValidator userCreationValidator, IPasswordHasher<IUser> passwordHasher, string phoneOrEmail, string password)
-        : this()
+
+        public static User CreateInstance(IUserCreationValidator userCreationValidator, IPasswordHasher<IUser> passwordHasher, string username, string phoneNumber, string email, string password)
         {
-            if (phoneOrEmail.IsValidEmail())
-                Email = phoneOrEmail;
-            else if (phoneOrEmail.IsValidPhoneNumber())
-                PhoneNumber = phoneOrEmail;
-            else
-                throw new Exception("invalid input for phoneOrEmail");
-            this.UserName = phoneOrEmail;
-            userCreationValidator.Check(this);
-            Password = passwordHasher.HashPassword(this, password);
+            if (!email.IsValidEmail())
+                throw new Exception("invalid input for email");
+            else if (!phoneNumber.IsValidPhoneNumber())
+                throw new Exception("invalid input for phoneNumber");
+            //Êï∞Â≠ó\Â≠óÊØç\‰∏ãÂàíÁ∫ø
+            if (!new Regex(@"\A[\w\d_]+\z").IsMatch(username))
+                throw new Exception("invalid input for username");
+            var result = new User()
+            {
+                Username = username,
+                Email = email,
+                PhoneNumber = phoneNumber
+            };
+            userCreationValidator.Check(result);
+            result.Password = passwordHasher.HashPassword(result, password);
+            return result;
         }
+
         public bool CheckPassword(string password)
         {
             var passwordHasher = this.ServiceProvider.GetService<IPasswordHasher<IUser>>();

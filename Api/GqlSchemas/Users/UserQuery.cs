@@ -23,7 +23,7 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users
             .UseFiltering<IUser>(x =>
             {
                 x.BindFieldsExplicitly();
-                x.Field(y => y.UserName);
+                x.Field(y => y.Username);
                 x.Field(y => y.IsEnable);
                 x.Field(y => y.PhoneNumber);
                 x.Field(y => y.OrgCodes);

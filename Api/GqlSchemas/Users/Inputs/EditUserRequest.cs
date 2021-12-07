@@ -20,6 +20,6 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users.Inputs
         public string AvatarFileId { get; set; }
         public UserClaim[] Claims { get; set; }
         public string? PhoneNumber { get; set; }
-        public string UserName { get; set; }
+        public string Username { get; set; }
     }
 }

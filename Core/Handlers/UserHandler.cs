@@ -77,8 +77,7 @@ namespace Geex.Common.Identity.Core.Handlers
         /// <returns>Response from the request</returns>
         public async Task<Unit> Handle(CreateUserRequest request, CancellationToken cancellationToken)
         {
-            var identifier = request.PhoneNumber.IsNullOrEmpty() ? request.Email : request.PhoneNumber;
-            var user = new User(this.UserCreationValidator, this.PasswordHasher, identifier, request.Password);
+            var user = User.CreateInstance(this.UserCreationValidator, this.PasswordHasher, request.Username, request.PhoneNumber, request.Email, request.Password);
             request.SetEntity(user, nameof(User.Password));
             DbContext.Attach(user);
             return Unit.Value;
