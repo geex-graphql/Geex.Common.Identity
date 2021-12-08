@@ -78,8 +78,11 @@ namespace Geex.Common.Identity.Core.Handlers
         public async Task<Unit> Handle(CreateUserRequest request, CancellationToken cancellationToken)
         {
             var user = User.CreateInstance(this.UserCreationValidator, this.PasswordHasher, request.Username, request.PhoneNumber, request.Email, request.Password);
-            request.SetEntity(user, nameof(User.Password));
             DbContext.Attach(user);
+            user.AvatarFileId = request.AvatarFileId;
+            user.IsEnable = request.IsEnable;
+            await user.AssignRoles(request.RoleNames);
+            await user.AssignOrgs(request.OrgCodes);
             return Unit.Value;
         }
 
