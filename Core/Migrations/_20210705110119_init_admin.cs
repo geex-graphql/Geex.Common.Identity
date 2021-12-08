@@ -21,7 +21,7 @@ namespace Geex.Core.Authentication.Migrations
     {
         public async Task UpgradeAsync(DbContext dbContext)
         {
-            var user = User.CreateInstance(dbContext.ServiceProvider.GetService<IUserCreationValidator>(), dbContext.ServiceProvider.GetService<IPasswordHasher<IUser>>(), "admin", "00000000000", "admin@fms.kuanfang.com", "admin");
+            var user = User.CreateInstance(dbContext.ServiceProvider.GetService<IUserCreationValidator>(), dbContext.ServiceProvider.GetService<IPasswordHasher<IUser>>(), "admin", "15555555555", "admin@fms.kuanfang.com", "admin");
             user.Id = "000000000000000000000001";
             user.RoleNames = new List<string> { "admin" };
             dbContext.Attach(user);
