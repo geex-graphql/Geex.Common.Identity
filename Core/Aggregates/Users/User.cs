@@ -110,5 +110,10 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
             Password = ServiceProvider.GetService<IPasswordHasher<IUser>>().HashPassword(this, password);
             return this;
         }
+
+        public Task AssignRoles(params string[] roles)
+        {
+            return this.AssignRoles(roles.ToList());
+        }
     }
 }
