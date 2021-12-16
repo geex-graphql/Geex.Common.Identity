@@ -1,10 +1,19 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Geex.Common.Abstraction.Gql.Inputs;
+using Geex.Common.Abstraction.Storage;
+using Geex.Common.Abstractions;
+using Geex.Common.Identity.Api.Aggregates.Orgs.Events;
 using Geex.Common.Identity.Api.GqlSchemas.Roles.Inputs;
 using Geex.Common.Identity.Core.Aggregates.Orgs;
+using Geex.Common.Identity.Core.Aggregates.Users;
+
 using MediatR;
+
 using MongoDB.Entities;
 
 namespace Geex.Common.Identity.Core.Handlers
@@ -13,10 +22,12 @@ namespace Geex.Common.Identity.Core.Handlers
         IRequestHandler<QueryInput<Org>, IQueryable<Org>>,
         IRequestHandler<CreateOrgInput, Org>
     {
+        private readonly LazyFactory<ClaimsPrincipal> _principalFactory;
         public DbContext DbContext { get; }
 
-        public OrgHandler(DbContext dbContext)
+        public OrgHandler(DbContext dbContext, LazyFactory<ClaimsPrincipal> principalFactory)
         {
+            _principalFactory = principalFactory;
             DbContext = dbContext;
         }
 
@@ -37,7 +48,20 @@ namespace Geex.Common.Identity.Core.Handlers
         {
             var entity = new Org(request.Code, request.Name);
             DbContext.Attach(entity);
-            await entity.SaveAsync(cancellation: cancellationToken);
+            var userId = _principalFactory.Value?.FindUserId();
+            if (!userId.IsNullOrEmpty())
+            {
+                var user = await DbContext.Queryable<User>().OneAsync(userId, cancellationToken: cancellationToken);
+                await user.AddOrg(entity);
+            }
+
+            // 拥有上级区域权限的用户自动获得新增子区域的权限
+            var upperUsers = DbContext.Queryable<User>().Where(x => x.OrgCodes.Contains(entity.ParentOrgCode)).ToList();
+            foreach (var upperUser in upperUsers)
+            {
+                await upperUser.AddOrg(entity);
+            }
+
             return entity;
         }
     }

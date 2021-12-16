@@ -115,5 +115,12 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         {
             return this.AssignRoles(roles.ToList());
         }
+
+        public async Task AddOrg(Org entity)
+        {
+            var orgCodes = this.OrgCodes.ToList();
+            orgCodes.Add(entity.Code);
+            await this.AssignOrgs(orgCodes);
+        }
     }
 }
