@@ -101,12 +101,14 @@ namespace Geex.Common.Identity.Core.Handlers
         /// <returns>Response from the request</returns>
         public async Task<Unit> Handle(AssignOrgRequest request, CancellationToken cancellationToken)
         {
-            var users = DbContext.Queryable<User>().Where(x => request.UserIds.Contains(x.Id)).ToList();
-            var orgs = DbContext.Queryable<Org>().Where(x => request.Orgs.Contains(x.Code)).ToList();
-            foreach (var user in users)
+            foreach (var item in request.UserOrgsMap)
             {
+                var user = await DbContext.Queryable<User>().OneAsync(item.UserId, cancellationToken);
+                var orgs = DbContext.Queryable<Org>().Where(x => item.OrgCodes.Contains(x.Code)).ToList();
                 await user.AssignOrgs(orgs);
             }
+
+
             return Unit.Value;
         }
 
