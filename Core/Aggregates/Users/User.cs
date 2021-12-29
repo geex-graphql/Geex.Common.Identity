@@ -23,6 +23,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using MongoDB.Entities;
 
+using NetCasbin.Abstractions;
 using Entity = Geex.Common.Abstraction.Storage.Entity;
 
 namespace Geex.Common.Identity.Core.Aggregates.Users
@@ -30,7 +31,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
     public partial class User : Abstraction.Storage.Entity, IUser
     {
         public string? PhoneNumber { get; set; }
-        public bool IsEnable { get; set; }
+        public bool IsEnable { get; set; } = true;
         public string Username { get; set; }
         public string? Email { get; set; }
         public string Password { get; set; }
@@ -47,7 +48,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
             this.SetPassword(newPassword);
         }
 
-        public List<string> RoleNames { get; set; } = Enumerable.Empty<string>().ToList();
+        public List<string> RoleNames => DbContext.ServiceProvider.GetService<IEnforcer>().GetRolesForUser(this.Id);
         public IBlobObject AvatarFile => DbContext.Queryable<BlobObject>().OneAsync(this.AvatarFileId).Result;
         public string AvatarFileId { get; set; }
 
@@ -56,7 +57,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         {
         }
 
-        public static User CreateInstance(IUserCreationValidator userCreationValidator, IPasswordHasher<IUser> passwordHasher, string username, string phoneNumber, string email, string password)
+        public static User New(IUserCreationValidator userCreationValidator, IPasswordHasher<IUser> passwordHasher, string username, string phoneNumber, string email, string password)
         {
             if (!email.IsValidEmail())
                 throw new Exception("invalid input for email");
@@ -69,7 +70,8 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
             {
                 Username = username,
                 Email = email,
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                LoginProvider = LoginProviderEnum.Local
             };
             userCreationValidator.Check(result);
             result.Password = passwordHasher.HashPassword(result, password);
@@ -83,7 +85,6 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         }
         public async Task AssignRoles(List<Role> roles)
         {
-            this.RoleNames = roles.Select(x => x.Name).ToList();
             this.AddDomainEvent(new UserRoleChangedEvent(this.Id, roles.Select(x => x.Name).ToList()));
         }
 
@@ -95,7 +96,6 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
 
         public async Task AssignRoles(List<string> roles)
         {
-            this.RoleNames = roles.ToList();
             this.AddDomainEvent(new UserRoleChangedEvent(this.Id, roles.ToList()));
         }
 
@@ -122,5 +122,34 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
             orgCodes.Add(entity.Code);
             await this.AssignOrgs(orgCodes);
         }
+
+        public static User NewExternal(IUserCreationValidator userCreationValidator, IPasswordHasher<IUser> passwordHasher, string openId, LoginProviderEnum loginProvider, string username, string? phoneNumber = default, string? email = default, string? password = default)
+        {
+            //if (!email.IsValidEmail())
+            //    throw new Exception("invalid input for email");
+            //else if (!phoneNumber.IsValidPhoneNumber())
+            //    throw new Exception("invalid input for phoneNumber");
+            //数字\字母\下划线
+            if (!new Regex(@"\A[\w\d_]+\z").IsMatch(username))
+                throw new Exception("invalid input for username");
+            var result = new User()
+            {
+                Username = username,
+                OpenId = openId,
+                LoginProvider = loginProvider,
+                PhoneNumber = phoneNumber,
+                Email = email,
+            };
+            userCreationValidator.Check(result);
+            if (!password.IsNullOrEmpty())
+            {
+                result.Password = passwordHasher.HashPassword(result, password);
+            }
+            return result;
+        }
+
+        public LoginProviderEnum LoginProvider { get; set; }
+
+        public string? OpenId { get; set; }
     }
 }

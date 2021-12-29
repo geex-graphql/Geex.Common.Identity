@@ -16,6 +16,8 @@ using MediatR;
 
 using MongoDB.Entities;
 
+using DbContext = MongoDB.Entities.DbContext;
+
 namespace Geex.Common.Identity.Core.Handlers
 {
     public class OrgHandler :
@@ -37,7 +39,7 @@ namespace Geex.Common.Identity.Core.Handlers
         /// <returns>Response from the request</returns>
         public async Task<IQueryable<Org>> Handle(QueryInput<Org> request, CancellationToken cancellationToken)
         {
-            return DbContext.Queryable<Org>();
+            return DbContext.Queryable<Org>().WhereIf(request.Filter != default, request.Filter);
         }
 
         /// <summary>Handles a request</summary>
@@ -48,7 +50,7 @@ namespace Geex.Common.Identity.Core.Handlers
         {
             var entity = new Org(request.Code, request.Name);
             DbContext.Attach(entity);
-            var userId = _principalFactory.Value?.FindUserId();
+            var userId = request.CreateUserId;
             if (!userId.IsNullOrEmpty())
             {
                 var user = await DbContext.Queryable<User>().OneAsync(userId, cancellationToken: cancellationToken);

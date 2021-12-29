@@ -17,7 +17,7 @@ namespace Geex.Common.Identity
         }
         public class UserPermission : IdentityPermission
         {
-            public static UserPermission Query { get; } = new("query_user");
+            public static UserPermission Query { get; } = new("query_users");
             public static UserPermission Create { get; } = new("mutation_createUser");
             public static UserPermission Edit { get; } = new("mutation_editUser");
 
@@ -27,7 +27,7 @@ namespace Geex.Common.Identity
         }
         public class RolePermission : IdentityPermission
         {
-            public static RolePermission Query { get; } = new("query_role");
+            public static RolePermission Query { get; } = new("query_roles");
             public static RolePermission Create { get; } = new("mutation_createRole");
             public static RolePermission Edit { get; } = new("mutation_editRole");
 
@@ -37,7 +37,7 @@ namespace Geex.Common.Identity
         }
         public class OrgPermission : IdentityPermission
         {
-            public static OrgPermission Query { get; } = new("query_org");
+            public static OrgPermission Query { get; } = new("query_orgs");
             public static OrgPermission Create { get; } = new("mutation_createOrg");
             public static OrgPermission Edit { get; } = new("mutation_editOrg");
 

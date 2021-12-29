@@ -7,6 +7,7 @@ using Geex.Common.Identity.Api.Aggregates.Users;
 using Geex.Common.Identity.Core.Aggregates.Users;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using NetCasbin.Abstractions;
 
 namespace Geex.Common.Identity.Api.Aggregates.Roles
 {
@@ -22,7 +23,14 @@ namespace Geex.Common.Identity.Api.Aggregates.Roles
             this.Name = name;
         }
 
-        public IQueryable<IUser> Users => DbContext.Queryable<User>().Where(x => x.RoleNames.Contains(this.Name));
+        public IQueryable<IUser> Users
+        {
+            get
+            {
+                var userIds = DbContext.ServiceProvider.GetService<IEnforcer>().GetUsersForRole(this.Name);
+                return DbContext.Queryable<User>().Where(x => userIds.Contains(x.Id));
+            }
+        }
         public List<string> Permissions => DbContext.ServiceProvider.GetService<IMediator>().Send(new GetSubjectPermissionsRequest(this.Name)).Result.ToList();
 
         public override bool Equals(object obj)

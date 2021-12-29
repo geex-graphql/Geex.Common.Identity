@@ -26,7 +26,7 @@ namespace Geex.Common.Identity.Core.Handlers
         /// <returns>Response from the request</returns>
         public async Task<IQueryable<Role>> Handle(QueryInput<Role> request, CancellationToken cancellationToken)
         {
-            return DbContext.Queryable<Role>();
+            return DbContext.Queryable<Role>().WhereIf(request.Filter != default, request.Filter);
         }
 
         /// <summary>Handles a request</summary>

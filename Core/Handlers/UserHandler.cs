@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Geex.Common.Abstraction.Entities;
 using Geex.Common.Abstraction.Gql.Inputs;
 using Geex.Common.Identity.Api.Aggregates.Roles;
 using Geex.Common.Identity.Api.Aggregates.Users;
@@ -29,7 +30,7 @@ namespace Geex.Common.Identity.Core.Handlers
         IRequestHandler<CreateUserRequest, Unit>,
         IRequestHandler<EditUserRequest, Unit>,
         IRequestHandler<ResetUserPasswordRequest>,
-        IRequestHandler<QueryInput<IUser>, IQueryable<IUser>>
+        ICommonHandler<IUser, User>
     {
         public DbContext DbContext { get; }
         public IUserCreationValidator UserCreationValidator { get; }
@@ -77,22 +78,13 @@ namespace Geex.Common.Identity.Core.Handlers
         /// <returns>Response from the request</returns>
         public async Task<Unit> Handle(CreateUserRequest request, CancellationToken cancellationToken)
         {
-            var user = User.CreateInstance(this.UserCreationValidator, this.PasswordHasher, request.Username, request.PhoneNumber, request.Email, request.Password);
+            var user = User.New(this.UserCreationValidator, this.PasswordHasher, request.Username, request.PhoneNumber, request.Email, request.Password);
             DbContext.Attach(user);
             user.AvatarFileId = request.AvatarFileId;
             user.IsEnable = request.IsEnable;
             await user.AssignRoles(request.RoleNames);
             await user.AssignOrgs(request.OrgCodes);
             return Unit.Value;
-        }
-
-        /// <summary>Handles a request</summary>
-        /// <param name="request">The request</param>
-        /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>Response from the request</returns>
-        public async Task<IQueryable<IUser>> Handle(QueryInput<IUser> request, CancellationToken cancellationToken)
-        {
-            return DbContext.Queryable<User>();
         }
 
         /// <summary>Handles a request</summary>

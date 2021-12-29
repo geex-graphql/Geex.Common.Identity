@@ -24,6 +24,12 @@ namespace Geex.Common.Identity.Api.Aggregates.Users
             return users.FirstOrDefault(x => x.PhoneNumber == userIdentifier || x.Username == userIdentifier || x.Email == userIdentifier);
         }
 
+        public static IQueryable<UserBrief>? AsBrief(this IQueryable<IUser> users)
+        {
+            return users.Select(x => new UserBrief(x.Email, x.Id, x.OpenId,
+                x.LoginProvider, x.PhoneNumber, x.Username));
+        }
+
         internal static Find<User, User> MatchUserIdentifier(this Find<User> @this, string userIdentifier)
         {
             if ((ObjectId.TryParse(userIdentifier, out _)))

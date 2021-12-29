@@ -18,8 +18,10 @@ namespace Geex.Common.Identity.Api.Aggregates.Users
     {
         string PhoneNumber { get; set; }
         string Username { get; set; }
-        public bool IsEnable { get; set; }
         string Email { get; set; }
+        LoginProviderEnum LoginProvider { get; set; }
+        string OpenId { get; set; }
+        public bool IsEnable { get; set; }
         List<string> RoleNames { get; }
         IBlobObject AvatarFile { get; }
         string AvatarFileId { get; set; }
