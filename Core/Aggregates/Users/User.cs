@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using Geex.Common.Abstraction;
+using Geex.Common.Abstraction.Authorization;
 using Geex.Common.Abstractions;
 using Geex.Common.Abstractions.Enumerations;
 using Geex.Common.BlobStorage.Api.Aggregates.BlobObjects;
@@ -48,7 +49,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
             this.SetPassword(newPassword);
         }
 
-        public List<string> RoleNames => DbContext.ServiceProvider.GetService<IEnforcer>().GetRolesForUser(this.Id);
+        public List<string> RoleNames => DbContext.ServiceProvider.GetService<IRbacEnforcer>().GetRolesForUser(this.Id);
         public IBlobObject AvatarFile => DbContext.Queryable<BlobObject>().OneAsync(this.AvatarFileId).Result;
         public string AvatarFileId { get; set; }
 

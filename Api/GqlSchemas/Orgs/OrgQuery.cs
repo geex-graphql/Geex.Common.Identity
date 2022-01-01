@@ -38,7 +38,8 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Orgs
             [Service] IMediator mediator
             )
         {
-            return await mediator.Send(new QueryInput<Org>());
+            var orgs = await mediator.Send(new QueryInput<Org>());
+            return orgs.OrderBy(x => x.Code);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Geex.Common.Abstraction;
+using Geex.Common.Abstraction.Authorization;
 using Geex.Common.Abstraction.Storage;
 using Geex.Common.Identity.Api.Aggregates.Users;
 using Geex.Common.Identity.Core.Aggregates.Users;
@@ -27,7 +28,7 @@ namespace Geex.Common.Identity.Api.Aggregates.Roles
         {
             get
             {
-                var userIds = DbContext.ServiceProvider.GetService<IEnforcer>().GetUsersForRole(this.Name);
+                var userIds = DbContext.ServiceProvider.GetService<IRbacEnforcer>().GetUsersForRole(this.Name);
                 return DbContext.Queryable<User>().Where(x => userIds.Contains(x.Id));
             }
         }

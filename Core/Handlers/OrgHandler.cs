@@ -48,7 +48,7 @@ namespace Geex.Common.Identity.Core.Handlers
         /// <returns>Response from the request</returns>
         public async Task<Org> Handle(CreateOrgInput request, CancellationToken cancellationToken)
         {
-            var entity = new Org(request.Code, request.Name);
+            var entity = new Org(request.Code, request.Name, request.OrgType);
             DbContext.Attach(entity);
             var userId = request.CreateUserId;
             if (!userId.IsNullOrEmpty())
