@@ -27,7 +27,7 @@ namespace Geex.Common.Identity.Api.Aggregates.Users
         public static IQueryable<UserBrief>? AsBrief(this IQueryable<IUser> users)
         {
             return users.Select(x => new UserBrief(x.Email, x.Id, x.OpenId,
-                x.LoginProvider, x.PhoneNumber, x.Username));
+                x.LoginProvider, x.PhoneNumber, x.Username, x.Nickname));
         }
 
         internal static Find<User, User> MatchUserIdentifier(this Find<User> @this, string userIdentifier)

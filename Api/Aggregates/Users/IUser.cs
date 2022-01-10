@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Geex.Common.Abstraction;
 using Geex.Common.BlobStorage.Api.Aggregates.BlobObjects;
@@ -18,6 +19,7 @@ namespace Geex.Common.Identity.Api.Aggregates.Users
     {
         string PhoneNumber { get; set; }
         string Username { get; set; }
+        string Nickname { get; set; }
         string Email { get; set; }
         LoginProviderEnum LoginProvider { get; set; }
         string OpenId { get; set; }
@@ -30,6 +32,10 @@ namespace Geex.Common.Identity.Api.Aggregates.Users
         IQueryable<Org> Orgs { get; }
         List<string> OrgCodes { get; set; }
         List<string> Permissions { get; }
+
+        Task AddOrg(Org entity);
+        Task AssignOrgs(List<string> orgs);
+        Task AssignRoles(List<string> roles);
         void ChangePassword(string originPassword, string newPassword);
     }
 }

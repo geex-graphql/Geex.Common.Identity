@@ -26,7 +26,7 @@ namespace Geex.Core.Authentication.Migrations
         public async Task UpgradeAsync(DbContext dbContext)
         {
             await dbContext.SaveChanges();
-            var superAdmin = User.New(dbContext.ServiceProvider.GetService<IUserCreationValidator>(), dbContext.ServiceProvider.GetService<IPasswordHasher<IUser>>(), "superAdmin", "15055555555", "superAdmin@fms.kuanfang.com", "superAdmin");
+            var superAdmin = User.New(dbContext.ServiceProvider.GetService<IUserCreationValidator>(), dbContext.ServiceProvider.GetService<IPasswordHasher<IUser>>(), "superAdmin", "superAdmin", "15055555555", "superAdmin@fms.kuanfang.com", "superAdmin");
             dbContext.Attach(superAdmin);
             superAdmin.Id = "000000000000000000000001";
             await dbContext.SaveChanges();
@@ -40,11 +40,11 @@ namespace Geex.Core.Authentication.Migrations
             dbContext.Attach(roles);
             adminRole.Id = "000000000000000000000001";
             userRole.Id = "000000000000000000000002";
-            var admin = User.New(dbContext.ServiceProvider.GetService<IUserCreationValidator>(), dbContext.ServiceProvider.GetService<IPasswordHasher<IUser>>(), "admin", "13333333332", "admin@fms.kuanfang.com", "admin");
+            var admin = User.New(dbContext.ServiceProvider.GetService<IUserCreationValidator>(), dbContext.ServiceProvider.GetService<IPasswordHasher<IUser>>(), "admin", "admin", "13333333332", "admin@fms.kuanfang.com", "admin");
             dbContext.Attach(admin);
             admin.Id = "000000000000000000000002";
             await admin.AssignRoles("admin");
-            var user = User.New(dbContext.ServiceProvider.GetService<IUserCreationValidator>(), dbContext.ServiceProvider.GetService<IPasswordHasher<IUser>>(), "user", "15555555555", "user@fms.kuanfang.cn", "user");
+            var user = User.New(dbContext.ServiceProvider.GetService<IUserCreationValidator>(), dbContext.ServiceProvider.GetService<IPasswordHasher<IUser>>(), "user", "user", "15555555555", "user@fms.kuanfang.cn", "user");
             dbContext.Attach(user);
             user.Id = "000000000000000000000003";
             await user.AssignRoles("user");

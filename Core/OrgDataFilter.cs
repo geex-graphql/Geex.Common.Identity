@@ -14,14 +14,19 @@ using MongoDB.Entities.Interceptors;
 
 namespace Geex.Common.Identity.Core
 {
+    /// <summary>
+    /// 组织架构的资源授权过滤器
+    /// </summary>
     public class OrgDataFilter : ExpressionDataFilter<IOrgFilteredEntity>
     {
-        public OrgDataFilter(LazyFactory<ClaimsPrincipal> claimsPrincipal) : base(PredicateBuilder.New<IOrgFilteredEntity>(entity => claimsPrincipal.Value.FindUserId() == "000000000000000000000001" || claimsPrincipal.Value.FindOrgCodes().Contains(entity.OrgCode)), null)
+        public OrgDataFilter(LazyFactory<ClaimsPrincipal> claimsPrincipal) : base(PredicateBuilder.New<IOrgFilteredEntity>(entity => claimsPrincipal.Value.FindUserId() == "000000000000000000000001" || entity.OrgCode == null || claimsPrincipal.Value.FindOrgCodes().Contains(entity.OrgCode)), null)
         {
 
         }
     }
-
+    /// <summary>
+    /// 授权过滤接口
+    /// </summary>
     public interface IOrgFilteredEntity : IEntity
     {
         public string OrgCode { get; }

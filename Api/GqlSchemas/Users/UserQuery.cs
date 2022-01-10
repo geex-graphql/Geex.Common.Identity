@@ -24,6 +24,7 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users
             {
                 x.BindFieldsExplicitly();
                 x.Field(y => y.Username);
+                x.Field(y => y.Nickname);
                 x.Field(y => y.IsEnable);
                 x.Field(y => y.PhoneNumber);
                 x.Field(y => y.OrgCodes);

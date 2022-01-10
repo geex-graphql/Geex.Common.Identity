@@ -78,7 +78,7 @@ namespace Geex.Common.Identity.Core.Handlers
         /// <returns>Response from the request</returns>
         public async Task<Unit> Handle(CreateUserRequest request, CancellationToken cancellationToken)
         {
-            var user = User.New(this.UserCreationValidator, this.PasswordHasher, request.Username, request.PhoneNumber, request.Email, request.Password);
+            var user = User.New(this.UserCreationValidator, this.PasswordHasher, request.Username, request.Username, request.PhoneNumber, request.Email, request.Password);
             DbContext.Attach(user);
             user.AvatarFileId = request.AvatarFileId;
             user.IsEnable = request.IsEnable;
