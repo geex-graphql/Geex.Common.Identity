@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 
 using Geex.Common.Abstraction;
 using Geex.Common.Abstraction.Storage;
+using Geex.Common.Identity.Api.Aggregates.Orgs.Events;
 using Geex.Common.Identity.Core.Aggregates.Users;
 
 
@@ -46,6 +47,10 @@ namespace Geex.Common.Identity.Core.Aggregates.Orgs
         /// </summary>
         public string ParentOrgCode => this.Code.Split('.').SkipLast(1).JoinAsString(".");
         /// <summary>
+        /// 父组织
+        /// </summary>
+        public Org ParentOrg => DbContext.Queryable<Org>().FirstOrDefault(x => ParentOrgCode == x.Code);
+        /// <summary>
         /// 所有父组织编码
         /// </summary>
         public List<string> AllParentOrgCodes => this.ParentOrgCode.Split('.', StringSplitOptions.RemoveEmptyEntries).Aggregate(new List<string>(), (list, next) => list.Append(
@@ -54,6 +59,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Orgs
         /// 组织类型
         /// </summary>
         public OrgTypeEnum OrgType { get; set; }
+
         public Org()
         {
         }
@@ -63,6 +69,23 @@ namespace Geex.Common.Identity.Core.Aggregates.Orgs
             this.Code = code;
             this.Name = name;
             this.OrgType = orgTypeEnum ?? OrgTypeEnum.Default;
+        }
+
+        /// <summary>
+        /// 修改组织编码
+        /// </summary>
+        /// <param name="newOrgCode"></param>
+        public void SetCode(string newOrgCode)
+        {
+            var originCode = this.Code;
+
+            var subOrgs = this.DirectSubOrgs.ToList();
+            foreach (var subOrg in subOrgs)
+            {
+                subOrg.SetCode(subOrg.Code.Replace(this.Code, newOrgCode));
+            }
+
+            this.AddDomainEvent(new OrgCodeChangedEvent(originCode, newOrgCode));
         }
     }
 }

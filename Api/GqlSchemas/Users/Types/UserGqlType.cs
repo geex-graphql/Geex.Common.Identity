@@ -1,5 +1,6 @@
 ﻿using Geex.Common.Identity.Api.Aggregates.Users;
 using Geex.Common.Identity.Core.Aggregates.Users;
+
 using HotChocolate.Types;
 
 namespace Geex.Common.Identity.Api.GqlSchemas.Users.Types
@@ -18,7 +19,10 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users.Types
             //descriptor.Field(x => x.PhoneNumber);
             //descriptor.Field(x => x.Roles);
             //descriptor.Field(x => x.Orgs);
-            //descriptor.Field(x => x.Claims);
+            descriptor.Field(x => x.Claims).UseFiltering<UserClaim>(x =>
+            {
+                x.Field(y => y.ClaimType);
+            });
             //descriptor.Ignore(x => x.Claims);
             //descriptor.Ignore(x => x.AuthorizedPermissions);
             base.Configure(descriptor);

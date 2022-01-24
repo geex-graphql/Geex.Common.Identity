@@ -27,7 +27,7 @@ namespace Geex.Common.Identity.Api.Aggregates.Users
         List<string> RoleNames { get; }
         IBlobObject AvatarFile { get; }
         string AvatarFileId { get; set; }
-        UserClaim[] Claims { get; set; }
+        List<UserClaim> Claims { get; set; }
         public IQueryable<Role> Roles { get; }
         IQueryable<Org> Orgs { get; }
         List<string> OrgCodes { get; set; }

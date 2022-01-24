@@ -38,7 +38,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         public string Nickname { get; set; }
         public string? Email { get; set; }
         public string Password { get; set; }
-        public UserClaim[] Claims { get; set; } = Enumerable.Empty<UserClaim>().ToArray();
+        public List<UserClaim> Claims { get; set; } = Enumerable.Empty<UserClaim>().ToList();
         public IQueryable<Org> Orgs => DbContext.Queryable<Org>().Where(x => this.OrgCodes.Contains(x.Code));
         public List<string> OrgCodes { get; set; } = Enumerable.Empty<string>().ToList();
         public List<string> Permissions => DbContext.ServiceProvider.GetService<IMediator>().Send(new GetSubjectPermissionsRequest(this.Id)).Result.ToList();

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 using Geex.Common.Abstraction.Gql.Inputs;
@@ -45,6 +46,16 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users
         {
             var result = await mediator.Send(new QueryInput<IUser>());
             return result;
+        }
+
+        public async Task<IUser> CurrentUser(
+            [Service] IMediator mediator,
+            [Service] ClaimsPrincipal claimsPrincipal
+            )
+        {
+            var userId = claimsPrincipal.FindUserId();
+            var user = (await mediator.Send(new QueryInput<IUser>(x => x.Id == userId))).FirstOrDefault();
+            return user;
         }
     }
 }

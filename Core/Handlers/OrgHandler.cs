@@ -51,13 +51,14 @@ namespace Geex.Common.Identity.Core.Handlers
             var entity = new Org(request.Code, request.Name, request.OrgType);
             DbContext.Attach(entity);
             var userId = request.CreateUserId;
+            // 区域创建者自动拥有Org权限
             if (!userId.IsNullOrEmpty())
             {
                 var user = await DbContext.Queryable<User>().OneAsync(userId, cancellationToken: cancellationToken);
                 await user.AddOrg(entity);
             }
 
-            // 拥有上级区域权限的用户自动获得新增子区域的权限
+            // 拥有上级Org权限的用户自动获得新增子Org的权限
             var upperUsers = DbContext.Queryable<User>().Where(x => x.OrgCodes.Contains(entity.ParentOrgCode)).ToList();
             foreach (var upperUser in upperUsers)
             {

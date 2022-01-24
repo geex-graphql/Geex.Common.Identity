@@ -24,6 +24,7 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Orgs.Types
             descriptor.Field(x => x.AllSubOrgs);
             descriptor.Field(x => x.DirectSubOrgs);
             descriptor.Field(x => x.ParentOrgCode);
+            descriptor.Field(x => x.ParentOrg);
             descriptor.Field(x => x.AllParentOrgCodes);
             descriptor.Field(x => x.AllParentOrgs);
             base.Configure(descriptor);
