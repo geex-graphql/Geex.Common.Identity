@@ -35,7 +35,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         public string? PhoneNumber { get; set; }
         public bool IsEnable { get; set; } = true;
         public string Username { get; set; }
-        public string Nickname { get; set; }
+        public string? Nickname { get; set; }
         public string? Email { get; set; }
         public string Password { get; set; }
         public List<UserClaim> Claims { get; set; } = Enumerable.Empty<UserClaim>().ToList();
@@ -52,8 +52,8 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         }
 
         public List<string> RoleNames => DbContext.ServiceProvider.GetService<IRbacEnforcer>().GetRolesForUser(this.Id);
-        public IBlobObject AvatarFile => DbContext.Queryable<BlobObject>().OneAsync(this.AvatarFileId).Result;
-        public string AvatarFileId { get; set; }
+        public IBlobObject? AvatarFile => DbContext.Queryable<BlobObject>().OneAsync(this.AvatarFileId).Result;
+        public string? AvatarFileId { get; set; }
 
         public IQueryable<Role> Roles => DbContext.Queryable<Role>().Where(x => this.RoleNames.Contains(x.Name));
         protected User()
@@ -62,13 +62,6 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
 
         public static User New(IUserCreationValidator userCreationValidator, IPasswordHasher<IUser> passwordHasher, string username, string nickname, string phoneNumber, string email, string password)
         {
-            if (!email.IsValidEmail())
-                throw new Exception("invalid input for email");
-            else if (!phoneNumber.IsValidPhoneNumber())
-                throw new Exception("invalid input for phoneNumber");
-            //数字\字母\下划线
-            if (!new Regex(@"\A[\w\d_]+\z").IsMatch(username))
-                throw new Exception("invalid input for username");
             var result = new User()
             {
                 Username = username,
@@ -83,9 +76,6 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
 
         public static User New(IUserCreationValidator userCreationValidator, IPasswordHasher<IUser> passwordHasher, string username, string nickname, LoginProviderEnum loginProvider, string openId, string? phoneNumber = default, string? email = default, string? password = default)
         {
-            //数字\字母\下划线
-            if (!new Regex(@"\A[\w\d_]+\z").IsMatch(username))
-                throw new Exception("invalid username");
             var result = new User()
             {
                 Username = username,
@@ -146,13 +136,6 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
 
         public static User NewExternal(IUserCreationValidator userCreationValidator, IPasswordHasher<IUser> passwordHasher, string openId, LoginProviderEnum loginProvider, string username, string? phoneNumber = default, string? email = default, string? password = default)
         {
-            //if (!email.IsValidEmail())
-            //    throw new Exception("invalid input for email");
-            //else if (!phoneNumber.IsValidPhoneNumber())
-            //    throw new Exception("invalid input for phoneNumber");
-            //数字\字母\下划线
-            if (!new Regex(@"\A[\w\d_]+\z").IsMatch(username))
-                throw new Exception("invalid input for username");
             var result = new User()
             {
                 Username = username,
@@ -172,5 +155,6 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         public LoginProviderEnum LoginProvider { get; set; }
 
         public string? OpenId { get; set; }
+        public string? TenantCode { get; protected set; }
     }
 }

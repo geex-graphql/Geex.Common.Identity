@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 using Geex.Common.Identity.Api.Aggregates.Users;
-
+using HotChocolate;
 using MediatR;
 
 using MongoDB.Bson;
@@ -17,8 +17,8 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users.Inputs
         public string? Email { get; set; }
         public List<string> RoleNames { get; set; }
         public List<string> OrgCodes { get; set; }
-        public string AvatarFileId { get; set; }
-        public List<UserClaim> Claims { get; set; }
+        public string? AvatarFileId { get; set; }
+        public Optional<List<UserClaim>> Claims { get; set; } = new List<UserClaim>();
         public string? PhoneNumber { get; set; }
         public string Username { get; set; }
     }

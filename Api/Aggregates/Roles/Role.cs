@@ -1,21 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Geex.Common.Abstraction;
 using Geex.Common.Abstraction.Authorization;
-using Geex.Common.Abstraction.Storage;
+using Geex.Common.Abstraction.MultiTenant;
 using Geex.Common.Identity.Api.Aggregates.Users;
 using Geex.Common.Identity.Core.Aggregates.Users;
+
+using HotChocolate;
+
 using MediatR;
+
 using Microsoft.Extensions.DependencyInjection;
+
+using MongoDB.Entities;
+
 using NetCasbin.Abstractions;
+
+using Entity = Geex.Common.Abstraction.Storage.Entity;
 
 namespace Geex.Common.Identity.Api.Aggregates.Roles
 {
     /// <summary>
     /// role为了方便和string的相互转化, 采用class的形式
     /// </summary>
-    public class Role : Entity
+    public class Role : Entity, ITenantFilteredEntity
     {
         public string Name { get; set; }
 
@@ -33,6 +43,11 @@ namespace Geex.Common.Identity.Api.Aggregates.Roles
             }
         }
         public List<string> Permissions => DbContext.ServiceProvider.GetService<IMediator>().Send(new GetSubjectPermissionsRequest(this.Name)).Result.ToList();
+
+        public string? TenantCode { get; protected set; }
+        public bool IsDefault { get; set; }
+        public bool IsStatic { get; set; }
+        public bool IsEnabled { get; set; } = true;
 
         public override bool Equals(object obj)
         {
@@ -74,6 +89,15 @@ namespace Geex.Common.Identity.Api.Aggregates.Roles
         public static bool operator !=(Role left, Role right)
         {
             return !(left == right);
+        }
+
+        public static Role Create(string roleName, bool isStatic = false, bool isDefault = false)
+        {
+            return new Role(roleName)
+            {
+                IsStatic = isStatic,
+                IsDefault = isDefault
+            };
         }
     }
 }

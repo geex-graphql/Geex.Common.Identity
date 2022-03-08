@@ -11,7 +11,6 @@ namespace Geex.Common.Identity.Core.EntityMapConfigs.Orgs
         public void Map(BsonClassMap<Org> map)
         {
             map.AutoMap();
-            map.MapProperty(x => x.OrgType).SetSerializer(new EnumerationSerializer<OrgTypeEnum, string>());
         }
     }
 }

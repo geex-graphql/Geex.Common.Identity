@@ -11,7 +11,6 @@ namespace Geex.Common.Identity.Core.EntityMapConfigs.Users
         public void Map(BsonClassMap<User> map)
         {
             map.AutoMap();
-            map.MapProperty(x => x.LoginProvider).SetSerializer(new EnumerationSerializer<LoginProviderEnum, string>());
         }
     }
 }

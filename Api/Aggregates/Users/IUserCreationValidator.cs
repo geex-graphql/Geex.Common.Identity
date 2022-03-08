@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
-
+using System.Text.RegularExpressions;
 using Geex.Common.Abstractions;
 using Geex.Common.Identity.Core.Aggregates.Users;
-
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Entities;
 
 namespace Geex.Common.Identity.Api.Aggregates.Users
@@ -13,6 +13,26 @@ namespace Geex.Common.Identity.Api.Aggregates.Users
         public DbContext DbContext { get; }
         public void Check(User user)
         {
+            var emailEmpty = user.Email.IsNullOrEmpty();
+            var phoneEmpty = user.PhoneNumber.IsNullOrEmpty();
+            if (emailEmpty && phoneEmpty)
+            {
+                throw new Exception("either phoneNumber or email is needed");
+            }
+
+            if (!phoneEmpty && !user.PhoneNumber.IsValidPhoneNumber())
+            {
+                throw new Exception("invalid input for phoneNumber");
+            }
+
+            if (!emailEmpty && !user.Email.IsValidEmail())
+            {
+                throw new Exception("invalid input for email");
+            }
+
+            //Êý×Ö\×ÖÄ¸\ÏÂ»®Ïß\@·ûºÅ\.·ûºÅ
+            if (!new Regex(@"\A[\w\d_@\.]+\z").IsMatch(user.Username))
+                throw new Exception("invalid input for username");
             if (!user.Username.IsNullOrEmpty())
             {
                 var emailConflict = DbContext.Queryable<User>().Any(o => o.Username == user.Username);

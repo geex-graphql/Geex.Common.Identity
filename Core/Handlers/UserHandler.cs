@@ -39,7 +39,7 @@ namespace Geex.Common.Identity.Core.Handlers
     public class UserHandler :
         IRequestHandler<AssignRoleRequest, Unit>,
         IRequestHandler<AssignOrgRequest, Unit>,
-        IRequestHandler<CreateUserRequest, Unit>,
+        IRequestHandler<CreateUserRequest, IUser>,
         IRequestHandler<EditUserRequest, Unit>,
         IRequestHandler<ResetUserPasswordRequest>,
         INotificationHandler<UserOrgChangedEvent>,
@@ -82,7 +82,8 @@ namespace Geex.Common.Identity.Core.Handlers
         public async Task<Unit> Handle(EditUserRequest request, CancellationToken cancellationToken)
         {
             var user = await DbContext.Queryable<User>().OneAsync(request.Id.ToString(), cancellationToken);
-            request.SetEntity(user, nameof(User.Password), nameof(user.RoleNames));
+            user.Claims = request.Claims;
+            request.SetEntity(user, nameof(User.Password), nameof(user.RoleNames), nameof(user.Claims));
             await user.AssignRoles(request.RoleNames);
             await user.AssignOrgs(request.OrgCodes);
             return Unit.Value;
@@ -92,15 +93,26 @@ namespace Geex.Common.Identity.Core.Handlers
         /// <param name="request">The request</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Response from the request</returns>
-        public async Task<Unit> Handle(CreateUserRequest request, CancellationToken cancellationToken)
+        public async Task<IUser> Handle(CreateUserRequest request, CancellationToken cancellationToken)
         {
-            var user = User.New(this.UserCreationValidator, this.PasswordHasher, request.Username, request.Username, request.PhoneNumber, request.Email, request.Password);
+            User user;
+            if (!request.OpenId.HasValue)
+            {
+                user = User.New(this.UserCreationValidator, this.PasswordHasher, request.Username, request.Username, request.PhoneNumber, request.Email, request.Password);
+            }
+            else
+            {
+                user = User.NewExternal(this.UserCreationValidator, this.PasswordHasher, request.OpenId, request.Provider, request.Username, request.PhoneNumber, request.Email, request.Password);
+            }
+
             DbContext.Attach(user);
+            user.Nickname = request.Nickname;
             user.AvatarFileId = request.AvatarFileId;
             user.IsEnable = request.IsEnable;
             await user.AssignRoles(request.RoleNames);
             await user.AssignOrgs(request.OrgCodes);
-            return Unit.Value;
+            await user.SaveAsync(cancellationToken);
+            return user;
         }
 
         /// <summary>Handles a request</summary>

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Geex.Common.Abstraction;
+using Geex.Common.Abstraction.MultiTenant;
 using Geex.Common.BlobStorage.Api.Aggregates.BlobObjects;
 using Geex.Common.Identity.Api.Aggregates.Roles;
 using Geex.Common.Identity.Core.Aggregates.Orgs;
@@ -15,18 +16,18 @@ using MongoDB.Entities;
 
 namespace Geex.Common.Identity.Api.Aggregates.Users
 {
-    public interface IUser : IEntity
+    public interface IUser : IEntity, ITenantFilteredEntity
     {
-        string PhoneNumber { get; set; }
+        string? PhoneNumber { get; set; }
         string Username { get; set; }
-        string Nickname { get; set; }
-        string Email { get; set; }
+        string? Nickname { get; set; }
+        string? Email { get; set; }
         LoginProviderEnum LoginProvider { get; set; }
-        string OpenId { get; set; }
+        string? OpenId { get; set; }
         public bool IsEnable { get; set; }
         List<string> RoleNames { get; }
-        IBlobObject AvatarFile { get; }
-        string AvatarFileId { get; set; }
+        IBlobObject? AvatarFile { get; }
+        string? AvatarFileId { get; set; }
         List<UserClaim> Claims { get; set; }
         public IQueryable<Role> Roles { get; }
         IQueryable<Org> Orgs { get; }

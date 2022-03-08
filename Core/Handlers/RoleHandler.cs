@@ -1,10 +1,13 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Geex.Common.Abstraction.Gql.Inputs;
 using Geex.Common.Identity.Api.Aggregates.Roles;
 using Geex.Common.Identity.Api.GqlSchemas.Roles.Inputs;
+
 using MediatR;
+
 using MongoDB.Entities;
 
 namespace Geex.Common.Identity.Core.Handlers
@@ -35,9 +38,9 @@ namespace Geex.Common.Identity.Core.Handlers
         /// <returns>Response from the request</returns>
         public async Task<Role> Handle(CreateRoleInput request, CancellationToken cancellationToken)
         {
-            var role = new Role(request.RoleName);
+            var role = Role.Create(request.RoleName, request.IsStatic, request.IsDefault);
             DbContext.Attach(role);
-            await role.SaveAsync(cancellation: cancellationToken);
+            await role.SaveAsync(cancellationToken);
             return role;
         }
     }
