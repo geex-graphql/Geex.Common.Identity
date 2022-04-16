@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 
 using Geex.Common.Abstraction.Gql.Inputs;
-using Geex.Common.Gql.Roots;
+using Geex.Common.Abstraction.Gql.Types;
 using Geex.Common.Identity.Api.Aggregates.Roles;
 using Geex.Common.Identity.Api.GqlSchemas.Roles.Inputs;
 using Geex.Common.Identity.Api.GqlSchemas.Roles.Types;
@@ -16,7 +16,7 @@ using MongoDB.Entities;
 
 namespace Geex.Common.Identity.Api.GqlSchemas.Roles
 {
-    public class RoleQuery : QueryTypeExtension<RoleQuery>
+    public class RoleQuery : Query<RoleQuery>
     {
         protected override void Configure(IObjectTypeDescriptor<RoleQuery> descriptor)
         {

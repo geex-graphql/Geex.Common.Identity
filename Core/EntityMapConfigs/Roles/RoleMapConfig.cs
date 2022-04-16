@@ -9,9 +9,9 @@ using MongoDB.Bson.Serialization;
 
 namespace Geex.Common.Identity.Core.EntityMapConfigs.Roles
 {
-    public class RoleMapConfig : IEntityMapConfig<Role>
+    public class RoleMapConfig : EntityMapConfig<Role>
     {
-        public void Map(BsonClassMap<Role> map)
+        public override void Map(BsonClassMap<Role> map)
         {
             map.AutoMap();
         }

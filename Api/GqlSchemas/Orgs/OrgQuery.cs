@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Geex.Common.Abstraction.Gql.Inputs;
-using Geex.Common.Gql.Roots;
+using Geex.Common.Abstraction.Gql.Types;
 using Geex.Common.Identity.Api.GqlSchemas.Orgs.Types;
 using Geex.Common.Identity.Core.Aggregates.Orgs;
 
@@ -17,7 +17,7 @@ using MediatR;
 
 namespace Geex.Common.Identity.Api.GqlSchemas.Orgs
 {
-    public class OrgQuery : QueryTypeExtension<OrgQuery>
+    public class OrgQuery : Query<OrgQuery>
     {
         protected override void Configure(IObjectTypeDescriptor<OrgQuery> descriptor)
         {

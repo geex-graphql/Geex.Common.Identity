@@ -6,9 +6,9 @@ using MongoDB.Bson.Serialization;
 
 namespace Geex.Common.Identity.Core.EntityMapConfigs.Orgs
 {
-    public class OrgMapConfig : IEntityMapConfig<Org>
+    public class OrgMapConfig : EntityMapConfig<Org>
     {
-        public void Map(BsonClassMap<Org> map)
+        public override void Map(BsonClassMap<Org> map)
         {
             map.AutoMap();
         }

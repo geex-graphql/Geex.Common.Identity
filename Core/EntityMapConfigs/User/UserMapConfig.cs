@@ -6,10 +6,11 @@ using MongoDB.Bson.Serialization;
 
 namespace Geex.Common.Identity.Core.EntityMapConfigs.Users
 {
-    public class UserMapConfig : IEntityMapConfig<User>
+    public class UserMapConfig : EntityMapConfig<User>
     {
-        public void Map(BsonClassMap<User> map)
+        public override void Map(BsonClassMap<User> map)
         {
+            map.SetIsRootClass(true);
             map.AutoMap();
         }
     }

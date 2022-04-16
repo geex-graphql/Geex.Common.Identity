@@ -5,8 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Autofac;
-
-using Geex.Common.Gql.Roots;
+using Geex.Common.Abstraction.Gql.Types;
 using Geex.Common.Identity.Api.GqlSchemas.Roles.Inputs;
 using Geex.Common.Identity.Core.Aggregates.Orgs;
 
@@ -17,7 +16,7 @@ using MongoDB.Entities;
 
 namespace Geex.Common.Identity.Api.GqlSchemas.Orgs
 {
-    public class OrgMutation : MutationTypeExtension<OrgMutation>
+    public class OrgMutation : Mutation<OrgMutation>
     {
         protected override void Configure(IObjectTypeDescriptor<OrgMutation> descriptor)
         {

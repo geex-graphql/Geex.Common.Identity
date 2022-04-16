@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
-
-using Geex.Common.Gql.Roots;
+using Geex.Common.Abstraction.Gql.Types;
 using Geex.Common.Identity.Api.GqlSchemas.Users.Inputs;
 
 using HotChocolate;
@@ -10,7 +9,7 @@ using MediatR;
 
 namespace Geex.Common.Identity.Api.GqlSchemas.Users
 {
-    public class UserMutation : MutationTypeExtension<UserMutation>
+    public class UserMutation : Mutation<UserMutation>
     {
         protected override void Configure(IObjectTypeDescriptor<UserMutation> descriptor)
         {

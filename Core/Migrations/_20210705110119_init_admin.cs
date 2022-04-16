@@ -21,9 +21,9 @@ using NetCasbin.Abstractions;
 
 namespace Geex.Core.Authentication.Migrations
 {
-    public class _20210705110119_init_admin : IMigration
+    public class _20210705110119_init_admin : DbMigration
     {
-        public async Task UpgradeAsync(DbContext dbContext)
+        public override async Task UpgradeAsync(DbContext dbContext)
         {
             await dbContext.SaveChanges();
             var superAdmin = User.New(dbContext.ServiceProvider.GetService<IUserCreationValidator>(), dbContext.ServiceProvider.GetService<IPasswordHasher<IUser>>(), "superAdmin", "superAdmin", "15055555555", "superAdmin@fms.kuanfang.com", "superAdmin");

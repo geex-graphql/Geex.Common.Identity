@@ -90,7 +90,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
             return result;
         }
 
-        public bool CheckPassword(string password)
+        public virtual bool CheckPassword(string password)
         {
             var passwordHasher = this.ServiceProvider.GetService<IPasswordHasher<IUser>>();
             return passwordHasher!.VerifyHashedPassword(this, Password, password) != PasswordVerificationResult.Failed;

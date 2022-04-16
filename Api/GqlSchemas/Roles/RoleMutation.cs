@@ -1,8 +1,7 @@
 ﻿using System.Threading.Tasks;
 
 using Autofac;
-
-using Geex.Common.Gql.Roots;
+using Geex.Common.Abstraction.Gql.Types;
 using Geex.Common.Identity.Api.Aggregates.Roles;
 using Geex.Common.Identity.Api.GqlSchemas.Roles.Inputs;
 
@@ -14,7 +13,7 @@ using MongoDB.Entities;
 
 namespace Geex.Common.Identity.Api.GqlSchemas.Roles
 {
-    public class RoleMutation : MutationTypeExtension<RoleMutation>
+    public class RoleMutation : Mutation<RoleMutation>
     {
         protected override void Configure(IObjectTypeDescriptor<RoleMutation> descriptor)
         {

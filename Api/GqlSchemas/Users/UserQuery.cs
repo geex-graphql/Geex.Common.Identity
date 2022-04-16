@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 
 using Geex.Common.Abstraction.Gql.Inputs;
-using Geex.Common.Gql.Roots;
+using Geex.Common.Abstraction.Gql.Types;
 using Geex.Common.Identity.Api.Aggregates.Users;
 using Geex.Common.Identity.Api.GqlSchemas.Users.Types;
 
@@ -14,12 +14,12 @@ using MediatR;
 
 namespace Geex.Common.Identity.Api.GqlSchemas.Users
 {
-    public class UserQuery : QueryTypeExtension<UserQuery>
+    public class UserQuery : Query<UserQuery>
     {
         protected override void Configure(IObjectTypeDescriptor<UserQuery> descriptor)
         {
             descriptor.AuthorizeWithDefaultName();
-            descriptor.ConfigQuery(x => x.Users(default))
+            descriptor.Field(x => x.Users(default))
             .UseOffsetPaging<UserGqlType>()
             .UseFiltering<IUser>(x =>
             {
@@ -41,7 +41,7 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        public async Task<IQueryable<IUser>> Users(
+        public virtual async Task<IQueryable<IUser>> Users(
             [Service] IMediator mediator)
         {
             var result = await mediator.Send(new QueryInput<IUser>());
