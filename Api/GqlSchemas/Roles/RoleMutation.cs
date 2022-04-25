@@ -13,8 +13,15 @@ using MongoDB.Entities;
 
 namespace Geex.Common.Identity.Api.GqlSchemas.Roles
 {
-    public class RoleMutation : Mutation<RoleMutation>
+    public class RoleMutation : MutationExtension<RoleMutation>
     {
+        private readonly IMediator _mediator;
+
+        public RoleMutation(IMediator mediator)
+        {
+            this._mediator = mediator;
+        }
+
         protected override void Configure(IObjectTypeDescriptor<RoleMutation> descriptor)
         {
             descriptor.AuthorizeWithDefaultName();
@@ -22,10 +29,9 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Roles
         }
 
         public async Task<Role> CreateRole(
-            [Service] IMediator mediator,
             CreateRoleInput input)
         {
-            return await mediator.Send(input);
+            return await _mediator.Send(input);
         }
     }
 }

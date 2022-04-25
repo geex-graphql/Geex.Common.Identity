@@ -33,14 +33,14 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
     public partial class User : Abstraction.Storage.Entity, IUser
     {
         public string? PhoneNumber { get; set; }
-        public bool IsEnable { get; set; } = true;
+        public bool IsEnable { get; set; }
         public string Username { get; set; }
         public string? Nickname { get; set; }
         public string? Email { get; set; }
         public string Password { get; set; }
-        public List<UserClaim> Claims { get; set; } = Enumerable.Empty<UserClaim>().ToList();
+        public List<UserClaim> Claims { get; set; }
         public IQueryable<Org> Orgs => DbContext.Queryable<Org>().Where(x => this.OrgCodes.Contains(x.Code));
-        public List<string> OrgCodes { get; set; } = Enumerable.Empty<string>().ToList();
+        public List<string> OrgCodes { get; set; }
         public List<string> Permissions => DbContext.ServiceProvider.GetService<IMediator>().Send(new GetSubjectPermissionsRequest(this.Id)).Result.ToList();
         public void ChangePassword(string originPassword, string newPassword)
         {
@@ -52,12 +52,16 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         }
 
         public List<string> RoleNames => DbContext.ServiceProvider.GetService<IRbacEnforcer>().GetRolesForUser(this.Id);
-        public IBlobObject? AvatarFile => DbContext.Queryable<BlobObject>().OneAsync(this.AvatarFileId).Result;
+        public Lazy<IBlobObject?> AvatarFile { get; }
         public string? AvatarFileId { get; set; }
 
         public IQueryable<Role> Roles => DbContext.Queryable<Role>().Where(x => this.RoleNames.Contains(x.Name));
         protected User()
         {
+            IsEnable = true;
+            Claims = Enumerable.Empty<UserClaim>().ToList();
+            OrgCodes = Enumerable.Empty<string>().ToList();
+            AvatarFile = new Lazy<IBlobObject?>(() => DbContext.Queryable<BlobObject>().OneAsync(this.AvatarFileId).Result);
         }
 
         public static User New(IUserCreationValidator userCreationValidator, IPasswordHasher<IUser> passwordHasher, string username, string nickname, string phoneNumber, string email, string password)
@@ -155,6 +159,6 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         public LoginProviderEnum LoginProvider { get; set; }
 
         public string? OpenId { get; set; }
-        public string? TenantCode { get; protected set; }
+        public string? TenantCode { get; set; }
     }
 }

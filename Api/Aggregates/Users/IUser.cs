@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,6 +19,8 @@ namespace Geex.Common.Identity.Api.Aggregates.Users
 {
     public interface IUser : IEntity, ITenantFilteredEntity
     {
+        public const string SuperAdminName = "superAdmin";
+        public const string SuperAdminId = "000000000000000000000001";
         string? PhoneNumber { get; set; }
         string Username { get; set; }
         string? Nickname { get; set; }
@@ -26,7 +29,7 @@ namespace Geex.Common.Identity.Api.Aggregates.Users
         string? OpenId { get; set; }
         public bool IsEnable { get; set; }
         List<string> RoleNames { get; }
-        IBlobObject? AvatarFile { get; }
+        Lazy<IBlobObject?> AvatarFile { get; }
         string? AvatarFileId { get; set; }
         List<UserClaim> Claims { get; set; }
         public IQueryable<Role> Roles { get; }

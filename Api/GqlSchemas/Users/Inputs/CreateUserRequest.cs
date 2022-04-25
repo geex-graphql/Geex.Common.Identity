@@ -13,7 +13,7 @@ using Volo.Abp;
 
 namespace Geex.Common.Identity.Api.GqlSchemas.Users.Inputs
 {
-    public record CreateUserRequest : IRequest<IUser>
+    public class CreateUserRequest : IRequest<IUser>
     {
         public CreateUserRequest()
         {
@@ -22,16 +22,16 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users.Inputs
 
         public string Username { get; set; }
 
-        public Optional<bool> IsEnable { get; set; } = true;
+        public bool IsEnable { get; set; } = true;
         public string? Email { get; set; }
-        public Optional<List<string>> RoleNames { get; set; } = new List<string>();
-        public Optional<List<string>> OrgCodes { get; set; } = new List<string>();
+        public List<string>? RoleNames { get; set; } = new List<string>();
+        public List<string>? OrgCodes { get; set; } = new List<string>();
         public string? AvatarFileId { get; set; }
         public List<UserClaim>? Claims { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Password { get; set; }
-        public Optional<string> Nickname { get; set; }
-        public Optional<string> OpenId { get; set; }
-        public Optional<LoginProviderEnum> Provider { get; set; }
+        public string? Nickname { get; set; } = "";
+        public string? OpenId { get; set; } = "";
+        public LoginProviderEnum? Provider { get; set; } = LoginProviderEnum.Local;
     }
 }

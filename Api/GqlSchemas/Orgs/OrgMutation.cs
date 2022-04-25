@@ -16,8 +16,15 @@ using MongoDB.Entities;
 
 namespace Geex.Common.Identity.Api.GqlSchemas.Orgs
 {
-    public class OrgMutation : Mutation<OrgMutation>
+    public class OrgMutation : MutationExtension<OrgMutation>
     {
+        private readonly IMediator _mediator;
+
+        public OrgMutation(IMediator mediator)
+        {
+            this._mediator = mediator;
+        }
+
         protected override void Configure(IObjectTypeDescriptor<OrgMutation> descriptor)
         {
             descriptor.AuthorizeWithDefaultName();
@@ -25,10 +32,9 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Orgs
         }
 
         public async Task<Org> CreateOrg(
-            [Service] IMediator mediator,
             CreateOrgInput input)
         {
-            return await mediator.Send(input);
+            return await _mediator.Send(input);
         }
     }
 }

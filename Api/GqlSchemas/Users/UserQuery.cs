@@ -4,22 +4,33 @@ using System.Threading.Tasks;
 
 using Geex.Common.Abstraction.Gql.Inputs;
 using Geex.Common.Abstraction.Gql.Types;
+using Geex.Common.Abstractions;
 using Geex.Common.Identity.Api.Aggregates.Users;
 using Geex.Common.Identity.Api.GqlSchemas.Users.Types;
 
 using HotChocolate;
+using HotChocolate.AspNetCore.Authorization;
 using HotChocolate.Types;
 
 using MediatR;
 
 namespace Geex.Common.Identity.Api.GqlSchemas.Users
 {
-    public class UserQuery : Query<UserQuery>
+    public class UserQuery : QueryExtension<UserQuery>
     {
+        private readonly IMediator _mediator;
+        private readonly LazyFactory<ClaimsPrincipal> _claimsPrincipal;
+
+        public UserQuery(IMediator mediator, LazyFactory<ClaimsPrincipal> claimsPrincipal)
+        {
+            this._mediator = mediator;
+            this._claimsPrincipal = claimsPrincipal;
+        }
+
         protected override void Configure(IObjectTypeDescriptor<UserQuery> descriptor)
         {
             descriptor.AuthorizeWithDefaultName();
-            descriptor.Field(x => x.Users(default))
+            descriptor.Field(x => x.Users())
             .UseOffsetPaging<UserGqlType>()
             .UseFiltering<IUser>(x =>
             {
@@ -42,19 +53,16 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users
         /// <param name="dto"></param>
         /// <returns></returns>
         public virtual async Task<IQueryable<IUser>> Users(
-            [Service] IMediator mediator)
+            )
         {
-            var result = await mediator.Send(new QueryInput<IUser>());
+            var result = await _mediator.Send(new QueryInput<IUser>());
             return result;
         }
 
-        public async Task<IUser> CurrentUser(
-            [Service] IMediator mediator,
-            [Service] ClaimsPrincipal claimsPrincipal
-            )
+        public async Task<IUser> CurrentUser()
         {
-            var userId = claimsPrincipal.FindUserId();
-            var user = (await mediator.Send(new QueryInput<IUser>(x => x.Id == userId))).FirstOrDefault();
+            var userId = _claimsPrincipal.Value.FindUserId();
+            var user = (await _mediator.Send(new QueryInput<IUser>(x => x.Id == userId))).FirstOrDefault();
             return user;
         }
     }

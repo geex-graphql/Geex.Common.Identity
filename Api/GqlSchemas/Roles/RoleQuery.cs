@@ -16,12 +16,19 @@ using MongoDB.Entities;
 
 namespace Geex.Common.Identity.Api.GqlSchemas.Roles
 {
-    public class RoleQuery : Query<RoleQuery>
+    public class RoleQuery : QueryExtension<RoleQuery>
     {
+        private readonly IMediator _mediator;
+
+        public RoleQuery(IMediator mediator)
+        {
+            this._mediator = mediator;
+        }
+
         protected override void Configure(IObjectTypeDescriptor<RoleQuery> descriptor)
         {
             descriptor.AuthorizeWithDefaultName();
-            descriptor.ConfigQuery(x => x.Roles(default))
+            descriptor.Field(x => x.Roles())
             .UseOffsetPaging<RoleGqlType>()
             .UseFiltering<Role>(x =>
             {
@@ -33,10 +40,9 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Roles
             base.Configure(descriptor);
         }
         public async Task<IQueryable<Role>> Roles(
-            [Service] IMediator mediator
             )
         {
-            return await mediator.Send(new QueryInput<Role>());
+            return await _mediator.Send(new QueryInput<Role>());
         }
     }
 }

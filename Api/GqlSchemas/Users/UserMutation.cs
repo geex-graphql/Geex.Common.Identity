@@ -9,40 +9,42 @@ using MediatR;
 
 namespace Geex.Common.Identity.Api.GqlSchemas.Users
 {
-    public class UserMutation : Mutation<UserMutation>
+    public class UserMutation : MutationExtension<UserMutation>
     {
+        private readonly IMediator _mediator;
+
         protected override void Configure(IObjectTypeDescriptor<UserMutation> descriptor)
         {
             descriptor.AuthorizeWithDefaultName();
             base.Configure(descriptor);
         }
 
-        public async Task<bool> AssignRoles([Service] IMediator mediator, AssignRoleRequest input)
+        public async Task<bool> AssignRoles(AssignRoleRequest input)
         {
-            var result = await mediator.Send(input);
+            var result = await _mediator.Send(input);
             return true;
         }
 
-        public async Task<bool> AssignOrgs([Service] IMediator mediator, AssignOrgRequest input)
+        public async Task<bool> AssignOrgs(AssignOrgRequest input)
         {
-            var result = await mediator.Send(input);
+            var result = await _mediator.Send(input);
             return true;
         }
 
-        public async Task<bool> EditUser([Service] IMediator mediator, EditUserRequest input)
+        public async Task<bool> EditUser(EditUserRequest input)
         {
-            var result = await mediator.Send(input);
+            var result = await _mediator.Send(input);
             return true;
         }
-        public async Task<bool> CreateUser([Service] IMediator mediator, CreateUserRequest input)
+        public async Task<bool> CreateUser(CreateUserRequest input)
         {
-            var result = await mediator.Send(input);
+            var result = await _mediator.Send(input);
             return true;
         }
 
-        public async Task<bool> ResetUserPassword([Service] IMediator mediator, ResetUserPasswordRequest input)
+        public async Task<bool> ResetUserPassword(ResetUserPasswordRequest input)
         {
-            var result = await mediator.Send(input);
+            var result = await _mediator.Send(input);
             return true;
         }
     }

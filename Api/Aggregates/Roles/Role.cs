@@ -44,7 +44,7 @@ namespace Geex.Common.Identity.Api.Aggregates.Roles
         }
         public List<string> Permissions => DbContext.ServiceProvider.GetService<IMediator>().Send(new GetSubjectPermissionsRequest(this.Name)).Result.ToList();
 
-        public string? TenantCode { get; protected set; }
+        public string? TenantCode { get; set; }
         public bool IsDefault { get; set; }
         public bool IsStatic { get; set; }
         public bool IsEnabled { get; set; } = true;

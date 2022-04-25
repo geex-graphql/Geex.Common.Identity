@@ -96,7 +96,7 @@ namespace Geex.Common.Identity.Core.Handlers
         public async Task<IUser> Handle(CreateUserRequest request, CancellationToken cancellationToken)
         {
             User user;
-            if (!request.OpenId.HasValue)
+            if (request.OpenId.IsNullOrEmpty())
             {
                 user = User.New(this.UserCreationValidator, this.PasswordHasher, request.Username, request.Username, request.PhoneNumber, request.Email, request.Password);
             }

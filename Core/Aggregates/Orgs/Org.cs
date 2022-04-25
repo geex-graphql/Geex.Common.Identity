@@ -81,7 +81,7 @@ public class Org : Entity, ITenantFilteredEntity
     public OrgTypeEnum OrgType { get; set; }
 
     /// <inheritdoc />
-    public string? TenantCode { get; protected set; }
+    public string? TenantCode { get; set; }
 
     /// <summary>
     ///     ĞŞ¸Ä×éÖ¯±àÂë
