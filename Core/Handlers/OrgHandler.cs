@@ -24,10 +24,10 @@ namespace Geex.Common.Identity.Core.Handlers
         IRequestHandler<QueryInput<Org>, IQueryable<Org>>,
         IRequestHandler<CreateOrgInput, Org>
     {
-        private readonly LazyFactory<ClaimsPrincipal> _principalFactory;
+        private readonly LazyService<ClaimsPrincipal> _principalFactory;
         public DbContext DbContext { get; }
 
-        public OrgHandler(DbContext dbContext, LazyFactory<ClaimsPrincipal> principalFactory)
+        public OrgHandler(DbContext dbContext, LazyService<ClaimsPrincipal> principalFactory)
         {
             _principalFactory = principalFactory;
             DbContext = dbContext;

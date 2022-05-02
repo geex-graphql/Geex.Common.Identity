@@ -22,7 +22,7 @@ namespace Geex.Common.Identity.Core
     {
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
-            context.Services.AddScoped<IDataFilter<IOrgFilteredEntity>, OrgDataFilter>(x => new OrgDataFilter(x.GetService<LazyFactory<ClaimsPrincipal>>()));
+            context.Services.AddScoped<IDataFilter<IOrgFilteredEntity>, OrgDataFilter>(x => new OrgDataFilter(x.GetService<LazyService<ClaimsPrincipal>>()));
             base.ConfigureServices(context);
         }
 

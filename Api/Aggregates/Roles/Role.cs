@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Geex.Common.Abstraction;
 using Geex.Common.Abstraction.Authorization;
@@ -98,6 +101,10 @@ namespace Geex.Common.Identity.Api.Aggregates.Roles
                 IsStatic = isStatic,
                 IsDefault = isDefault
             };
+        }
+        public override async Task<ValidationResult> Validate(IServiceProvider sp, CancellationToken cancellation = default)
+        {
+            return ValidationResult.Success;
         }
     }
 }

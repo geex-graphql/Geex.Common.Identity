@@ -13,6 +13,11 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users
     {
         private readonly IMediator _mediator;
 
+        public UserMutation(IMediator mediator)
+        {
+            this._mediator = mediator;
+        }
+
         protected override void Configure(IObjectTypeDescriptor<UserMutation> descriptor)
         {
             descriptor.AuthorizeWithDefaultName();

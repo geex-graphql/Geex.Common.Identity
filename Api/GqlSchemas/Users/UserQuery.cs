@@ -19,9 +19,9 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users
     public class UserQuery : QueryExtension<UserQuery>
     {
         private readonly IMediator _mediator;
-        private readonly LazyFactory<ClaimsPrincipal> _claimsPrincipal;
+        private readonly LazyService<ClaimsPrincipal> _claimsPrincipal;
 
-        public UserQuery(IMediator mediator, LazyFactory<ClaimsPrincipal> claimsPrincipal)
+        public UserQuery(IMediator mediator, LazyService<ClaimsPrincipal> claimsPrincipal)
         {
             this._mediator = mediator;
             this._claimsPrincipal = claimsPrincipal;

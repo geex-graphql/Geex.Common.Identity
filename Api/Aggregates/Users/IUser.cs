@@ -29,7 +29,7 @@ namespace Geex.Common.Identity.Api.Aggregates.Users
         string? OpenId { get; set; }
         public bool IsEnable { get; set; }
         List<string> RoleNames { get; }
-        Lazy<IBlobObject?> AvatarFile { get; }
+        ResettableLazy<IBlobObject?> AvatarFile { get; }
         string? AvatarFileId { get; set; }
         List<UserClaim> Claims { get; set; }
         public IQueryable<Role> Roles { get; }

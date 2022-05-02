@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Geex.Common.Abstraction;
@@ -52,7 +53,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         }
 
         public List<string> RoleNames => DbContext.ServiceProvider.GetService<IRbacEnforcer>().GetRolesForUser(this.Id);
-        public Lazy<IBlobObject?> AvatarFile { get; }
+        public ResettableLazy<IBlobObject?> AvatarFile { get; }
         public string? AvatarFileId { get; set; }
 
         public IQueryable<Role> Roles => DbContext.Queryable<Role>().Where(x => this.RoleNames.Contains(x.Name));
@@ -61,7 +62,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
             IsEnable = true;
             Claims = Enumerable.Empty<UserClaim>().ToList();
             OrgCodes = Enumerable.Empty<string>().ToList();
-            AvatarFile = new Lazy<IBlobObject?>(() => DbContext.Queryable<BlobObject>().OneAsync(this.AvatarFileId).Result);
+            AvatarFile = new ResettableLazy<IBlobObject?>(() => DbContext.Queryable<BlobObject>().OneAsync(this.AvatarFileId).Result);
         }
 
         public static User New(IUserCreationValidator userCreationValidator, IPasswordHasher<IUser> passwordHasher, string username, string nickname, string phoneNumber, string email, string password)
@@ -160,5 +161,9 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
 
         public string? OpenId { get; set; }
         public string? TenantCode { get; set; }
+        public override async Task<ValidationResult> Validate(IServiceProvider sp, CancellationToken cancellation = default)
+        {
+            return ValidationResult.Success;
+        }
     }
 }
