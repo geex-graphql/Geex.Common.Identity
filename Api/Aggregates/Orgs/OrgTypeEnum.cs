@@ -2,7 +2,7 @@ using Geex.Common.Abstractions;
 
 namespace Geex.Common.Identity.Core.Aggregates.Orgs
 {
-    public class OrgTypeEnum : Enumeration<OrgTypeEnum, string>
+    public class OrgTypeEnum : Enumeration<OrgTypeEnum>
     {
         public OrgTypeEnum(string value) : base(value)
         {
