@@ -67,7 +67,7 @@ namespace Geex.Common.Identity.Core.Handlers
         public async Task<Unit> Handle(AssignRoleRequest request, CancellationToken cancellationToken)
         {
             var users = await Task.FromResult(DbContext.Queryable<User>().Where(x => request.UserIds.Contains(x.Id)).ToList());
-            var roles = await Task.FromResult(DbContext.Queryable<Role>().Where(x => request.Roles.Contains(x.Name)).ToList());
+            var roles = await Task.FromResult(DbContext.Queryable<Role>().Where(x => request.Roles.Contains(x.Id)).ToList());
             foreach (var user in users)
             {
                 await user.AssignRoles(roles);
@@ -82,9 +82,42 @@ namespace Geex.Common.Identity.Core.Handlers
         public async Task<Unit> Handle(EditUserRequest request, CancellationToken cancellationToken)
         {
             var user = await DbContext.Queryable<User>().OneAsync(request.Id.ToString(), cancellationToken);
-            user.Claims = request.Claims;
-            request.SetEntity(user, nameof(User.Password), nameof(user.RoleNames), nameof(user.Claims));
-            await user.AssignRoles(request.RoleNames);
+            if (request.Claims.HasValue)
+            {
+                user.Claims = request.Claims;
+            }
+
+            if (request.AvatarFileId != default)
+            {
+                user.AvatarFileId = request.AvatarFileId;
+            }
+
+            if (request.Email != default)
+            {
+                user.Email = request.Email;
+            }
+
+            if (request.IsEnable != default)
+            {
+                user.IsEnable = request.IsEnable.Value;
+            }
+
+            if (request.OrgCodes != default)
+            {
+                user.OrgCodes = request.OrgCodes;
+            }
+
+            if (request.PhoneNumber != default)
+            {
+                user.PhoneNumber = request.PhoneNumber;
+            }
+
+            if (request.Username != default)
+            {
+                user.Username = request.Username;
+            }
+
+            await user.AssignRoles(request.RoleIds);
             await user.AssignOrgs(request.OrgCodes);
             return Unit.Value;
         }
@@ -109,7 +142,7 @@ namespace Geex.Common.Identity.Core.Handlers
             user.Nickname = request.Nickname;
             user.AvatarFileId = request.AvatarFileId;
             user.IsEnable = request.IsEnable;
-            await user.AssignRoles(request.RoleNames);
+            await user.AssignRoles(request.RoleIds);
             await user.AssignOrgs(request.OrgCodes);
             await user.SaveAsync(cancellationToken);
             return user;

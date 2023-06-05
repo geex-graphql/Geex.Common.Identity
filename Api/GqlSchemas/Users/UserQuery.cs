@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-
+using Geex.Common.Abstraction.Entities;
 using Geex.Common.Abstraction.Gql.Inputs;
 using Geex.Common.Abstraction.Gql.Types;
 using Geex.Common.Abstractions;
@@ -40,7 +40,7 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users
                 x.Field(y => y.IsEnable);
                 x.Field(y => y.PhoneNumber);
                 x.Field(y => y.OrgCodes);
-                x.Field(y => y.RoleNames);
+                x.Field(y => y.RoleIds);
                 x.Field(y => y.Id);
             })
             ;

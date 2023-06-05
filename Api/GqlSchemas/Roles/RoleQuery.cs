@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Geex.Common.Abstraction.Gql.Inputs;
@@ -34,6 +35,7 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Roles
             {
                 x.BindFieldsExplicitly();
                 x.Field(y => y.Name);
+                x.Field(y => y.Id);
                 x.Field(y => y.Users);
             })
             ;

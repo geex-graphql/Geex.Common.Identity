@@ -1,4 +1,5 @@
-﻿using Geex.Common.Identity.Api.Aggregates.Users;
+﻿using Geex.Common.Abstraction.Entities;
+using Geex.Common.Identity.Api.Aggregates.Users;
 using Geex.Common.Identity.Core.Aggregates.Users;
 
 using HotChocolate.Types;

@@ -6,13 +6,14 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Geex.Common.Abstraction.Entities;
 using Geex.Common.Abstraction.MultiTenant;
 using Geex.Common.Abstraction.Storage;
 using Geex.Common.Identity.Api.Aggregates.Orgs.Events;
 
 namespace Geex.Common.Identity.Core.Aggregates.Orgs;
 
-public class Org : Entity, ITenantFilteredEntity
+public class Org : Entity<Org>, ITenantFilteredEntity, IOrg
 {
     public Org()
     {
@@ -31,56 +32,56 @@ public class Org : Entity, ITenantFilteredEntity
         DbContext.Queryable<Org>().Where(x => new Regex($@"^{Code}\.\w+(?!\.)$").IsMatch(x.Code));
 
     /// <summary>
-    ///     ËùÓĞ¸¸×éÖ¯±àÂë
+    ///     æ‰€æœ‰çˆ¶ç»„ç»‡ç¼–ç 
     /// </summary>
     public List<string> AllParentOrgCodes => ParentOrgCode.Split('.', StringSplitOptions.RemoveEmptyEntries).Aggregate(
         new List<string>(), (list, next) => list.Append(
             list.LastOrDefault().IsNullOrEmpty() ? next : string.Join('.', list.LastOrDefault(), next)).ToList());
 
     /// <summary>
-    ///     ËùÓĞ¸¸×éÖ¯
+    ///     æ‰€æœ‰çˆ¶ç»„ç»‡
     /// </summary>
-    public IQueryable<Org> AllParentOrgs => DbContext.Queryable<Org>().Where(x => AllParentOrgCodes.Contains(x.Code));
+    public IQueryable<IOrg> AllParentOrgs => DbContext.Queryable<Org>().Where(x => AllParentOrgCodes.Contains(x.Code));
 
     /// <summary>
-    ///     ËùÓĞ×Ó×éÖ¯±àÂë
+    ///     æ‰€æœ‰å­ç»„ç»‡ç¼–ç 
     /// </summary>
     public List<string> AllSubOrgCodes => _allSubOrgsQuery.Select(x => x.Code).ToList();
 
     /// <summary>
-    ///     ËùÓĞ×Ó×éÖ¯
+    ///     æ‰€æœ‰å­ç»„ç»‡
     /// </summary>
-    public IQueryable<Org> AllSubOrgs => _allSubOrgsQuery;
+    public IQueryable<IOrg> AllSubOrgs => _allSubOrgsQuery;
 
     /// <summary>
-    ///     Ö±Ïµ×Ó×éÖ¯±àÂë
+    ///     ç›´ç³»å­ç»„ç»‡ç¼–ç 
     /// </summary>
     public List<string> DirectSubOrgCodes => _directSubOrgsQuery.Select(x => x.Code).ToList();
 
     /// <summary>
-    ///     Ö±Ïµ×Ó×éÖ¯
+    ///     ç›´ç³»å­ç»„ç»‡
     /// </summary>
-    public IQueryable<Org> DirectSubOrgs => _directSubOrgsQuery;
+    public IQueryable<IOrg> DirectSubOrgs => _directSubOrgsQuery;
 
     /// <summary>
-    ///     ¸¸×éÖ¯
+    ///     çˆ¶ç»„ç»‡
     /// </summary>
-    public Org ParentOrg => DbContext.Queryable<Org>().FirstOrDefault(x => ParentOrgCode == x.Code);
+    public IOrg ParentOrg => DbContext.Queryable<Org>().FirstOrDefault(x => ParentOrgCode == x.Code);
 
     /// <summary>
-    ///     ¸¸×éÖ¯±àÂë
+    ///     çˆ¶ç»„ç»‡ç¼–ç 
     /// </summary>
     public string ParentOrgCode => Code.Split('.').SkipLast(1).JoinAsString(".");
 
     /// <summary>
-    ///     ÒÔ.×÷Îª·Ö¸îÏßµÄ±àÂë
+    ///     ç¼–ç 
     /// </summary>
     public string Code { get; set; }
 
     public string Name { get; set; }
 
     /// <summary>
-    ///     ×éÖ¯ÀàĞÍ
+    ///     ç»„ç»‡ç±»å‹
     /// </summary>
     public OrgTypeEnum OrgType { get; set; }
 
@@ -88,7 +89,7 @@ public class Org : Entity, ITenantFilteredEntity
     public string? TenantCode { get; set; }
 
     /// <summary>
-    ///     ĞŞ¸Ä×éÖ¯±àÂë
+    ///     ä¿®æ”¹ç»„ç»‡ç¼–ç 
     /// </summary>
     /// <param name="newOrgCode"></param>
     public void SetCode(string newOrgCode)

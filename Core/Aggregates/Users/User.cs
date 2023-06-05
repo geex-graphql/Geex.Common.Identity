@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 using Geex.Common.Abstraction;
 using Geex.Common.Abstraction.Authorization;
+using Geex.Common.Abstraction.Entities;
+using Geex.Common.Abstraction.Events;
 using Geex.Common.Abstractions;
 using Geex.Common.Abstractions.Enumerations;
 using Geex.Common.BlobStorage.Api.Aggregates.BlobObjects;
@@ -15,7 +17,6 @@ using Geex.Common.BlobStorage.Core.Aggregates.BlobObjects;
 using Geex.Common.Identity.Api.Aggregates.Orgs.Events;
 using Geex.Common.Identity.Api.Aggregates.Roles;
 using Geex.Common.Identity.Api.Aggregates.Users;
-using Geex.Common.Identity.Api.Aggregates.Users.Events;
 using Geex.Common.Identity.Core.Aggregates.Orgs;
 
 using MediatR;
@@ -27,11 +28,11 @@ using MongoDB.Entities;
 
 using NetCasbin.Abstractions;
 
-using Entity = Geex.Common.Abstraction.Storage.Entity;
+
 
 namespace Geex.Common.Identity.Core.Aggregates.Users
 {
-    public partial class User : Abstraction.Storage.Entity, IUser
+    public partial class User : Abstraction.Storage.Entity<User>, IUser
     {
         public string? PhoneNumber { get; set; }
         public bool IsEnable { get; set; }
@@ -40,7 +41,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
         public string? Email { get; set; }
         public string Password { get; set; }
         public List<UserClaim> Claims { get; set; }
-        public IQueryable<Org> Orgs => DbContext.Queryable<Org>().Where(x => this.OrgCodes.Contains(x.Code));
+        public IQueryable<IOrg> Orgs => DbContext.Queryable<Org>().Where(x => this.OrgCodes.Contains(x.Code));
         public List<string> OrgCodes { get; set; }
         public List<string> Permissions => DbContext.ServiceProvider.GetService<IMediator>().Send(new GetSubjectPermissionsRequest(this.Id)).Result.ToList();
         public void ChangePassword(string originPassword, string newPassword)
@@ -52,11 +53,20 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
             this.SetPassword(newPassword);
         }
 
-        public List<string> RoleNames => DbContext.ServiceProvider.GetService<IRbacEnforcer>().GetRolesForUser(this.Id);
+        public List<string> RoleIds => DbContext.ServiceProvider.GetService<IRbacEnforcer>().GetRolesForUser(this.Id);
         public ResettableLazy<IBlobObject?> AvatarFile { get; }
         public string? AvatarFileId { get; set; }
 
-        public IQueryable<Role> Roles => DbContext.Queryable<Role>().Where(x => this.RoleNames.Contains(x.Name));
+        public IQueryable<IRole> Roles => DbContext.Queryable<Role>().Where(x => this.RoleIds.Contains(x.Id));
+        public List<string> RoleNames
+        {
+            get
+            {
+                var roleNames = Roles.Select(x => x.Name).ToList();
+                return roleNames;
+            }
+        }
+
         protected User()
         {
             IsEnable = true;
@@ -85,7 +95,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
             {
                 Username = username,
                 Nickname = nickname,
-                Email = email ?? username + "@fms.kuanfang.com",
+                Email = email ?? username + "@x_org_x.com",
                 PhoneNumber = phoneNumber,
                 LoginProvider = loginProvider,
                 OpenId = openId,
@@ -100,9 +110,9 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
             var passwordHasher = this.ServiceProvider.GetService<IPasswordHasher<IUser>>();
             return passwordHasher!.VerifyHashedPassword(this, Password, password) != PasswordVerificationResult.Failed;
         }
-        public async Task AssignRoles(List<Role> roles)
+        public async Task AssignRoles(IEnumerable<IRole> roles)
         {
-            this.AddDomainEvent(new UserRoleChangedEvent(this.Id, roles.Select(x => x.Name).ToList()));
+            await this.AssignRoles(roles.Select(x => x.Id).ToList());
         }
 
         public async Task AssignOrgs(List<Org> orgs)
@@ -113,7 +123,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
 
         public async Task AssignRoles(List<string> roles)
         {
-            this.AddDomainEvent(new UserRoleChangedEvent(this.Id, roles.ToList()));
+            await this.ServiceProvider.GetService<IMediator>().Send(new UserRoleChangeRequest(this.Id, roles.ToList()));
         }
 
         public async Task AssignOrgs(List<string> orgs)
@@ -133,7 +143,7 @@ namespace Geex.Common.Identity.Core.Aggregates.Users
             return this.AssignRoles(roles.ToList());
         }
 
-        public async Task AddOrg(Org entity)
+        public async Task AddOrg(IOrg entity)
         {
             this.OrgCodes.AddIfNotContains(entity.Code);
             this.AddDomainEvent(new UserOrgChangedEvent(this.Id, this.OrgCodes.ToList()));

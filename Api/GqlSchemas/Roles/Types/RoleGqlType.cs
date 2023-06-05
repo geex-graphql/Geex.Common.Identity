@@ -11,20 +11,17 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Roles.Types
     {
         protected override void Configure(IObjectTypeDescriptor<Role> descriptor)
         {
-            descriptor.AuthorizeFieldsImplicitly();
-            descriptor.BindFieldsExplicitly();
-            descriptor.ConfigEntity();
+            descriptor.BindFieldsImplicitly();
             //descriptor.Field(x => x.Users).Type<ListType<UserType>>().Resolve(x=>x.ToString());
-            descriptor.Field(x => x.Name);
-            descriptor.Field(x => x.Users);
-            descriptor.Field(x => x.Permissions);
+            descriptor.ConfigEntity();
+            descriptor.AuthorizeFieldsImplicitly();
             base.Configure(descriptor);
         }
     }
 
     public abstract class RegexStringType : ScalarType
     {
-        protected RegexStringType(NameString name, string pattern) : base(name)
+        protected RegexStringType(string name, string pattern) : base(name)
         {
             this.Regex = new Regex(pattern, RegexOptions.Compiled);
         }

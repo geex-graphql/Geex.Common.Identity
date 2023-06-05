@@ -6,8 +6,9 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Roles.Inputs
 {
     public class CreateRoleInput : IRequest<Role>
     {
+        public string RoleCode { get; set; }
         public string RoleName { get; set; }
-        public Optional<bool> IsDefault { get; set; } = false;
-        public Optional<bool> IsStatic { get; set; } = false;
+        public bool? IsDefault { get; set; }
+        public bool? IsStatic { get; set; }
     }
 }

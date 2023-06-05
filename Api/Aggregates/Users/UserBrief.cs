@@ -21,13 +21,12 @@ namespace Geex.Common.Identity.Api.Aggregates.Users
             Nickname = nickname;
         }
 
-        public string Id { get; init; }
-        public string PhoneNumber { get; init; }
-        public string Username { get; init; }
-
-        public string Nickname { get; init; }
-        public string Email { get; init; }
-        public LoginProviderEnum LoginProvider { get; init; }
-        public string OpenId { get; init; }
+        public string? Id { get; init; }
+        public string? PhoneNumber { get; init; }
+        public string? Username { get; init; }
+        public string? Nickname { get; init; }
+        public string? Email { get; init; }
+        public LoginProviderEnum? LoginProvider { get; init; }
+        public string? OpenId { get; init; }
     }
 }

@@ -27,7 +27,7 @@ namespace Geex.Common.Identity.Core
     /// <summary>
     /// 授权过滤接口
     /// </summary>
-    public interface IOrgFilteredEntity : IEntity
+    public interface IOrgFilteredEntity : IEntityBase
     {
         public string OrgCode { get; }
     }

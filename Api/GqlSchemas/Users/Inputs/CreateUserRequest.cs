@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Geex.Common.Abstraction;
+using Geex.Common.Abstraction.Entities;
 using Geex.Common.Identity.Api.Aggregates.Users;
 using HotChocolate;
 using MediatR;
@@ -24,7 +25,7 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Users.Inputs
 
         public bool IsEnable { get; set; } = true;
         public string? Email { get; set; }
-        public List<string>? RoleNames { get; set; } = new List<string>();
+        public List<string>? RoleIds { get; set; } = new List<string>();
         public List<string>? OrgCodes { get; set; } = new List<string>();
         public string? AvatarFileId { get; set; }
         public List<UserClaim>? Claims { get; set; }

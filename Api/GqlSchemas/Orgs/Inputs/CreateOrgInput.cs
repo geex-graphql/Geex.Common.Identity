@@ -1,4 +1,5 @@
-﻿using Geex.Common.Identity.Core.Aggregates.Orgs;
+﻿using Geex.Common.Abstraction.Entities;
+using Geex.Common.Identity.Core.Aggregates.Orgs;
 
 using MediatR;
 

@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Geex.Common.Abstractions;
@@ -30,7 +30,7 @@ namespace Geex.Common.Identity.Api.Aggregates.Users
                 throw new Exception("invalid input for email");
             }
 
-            //Êı×Ö\×ÖÄ¸\ÏÂ»®Ïß\@·ûºÅ\.·ûºÅ
+            //æ•°å­—\å­—æ¯\ä¸‹åˆ’çº¿\@ç¬¦å·\.ç¬¦å·
             if (!new Regex(@"\A[\w\d_@\.]+\z").IsMatch(user.Username))
                 throw new Exception("invalid input for username");
             if (!user.Username.IsNullOrEmpty())
@@ -38,7 +38,7 @@ namespace Geex.Common.Identity.Api.Aggregates.Users
                 var emailConflict = DbContext.Queryable<User>().Any(o => o.Username == user.Username);
                 if (emailConflict)
                 {
-                    throw new BusinessException(GeexExceptionType.Conflict, message: "ÓÃ»§ÃûÒÑ´æÔÚ, ÈçÓĞÒÉÎÊ, ÇëÁªÏµ¹ÜÀíÔ±.");
+                    throw new BusinessException(GeexExceptionType.Conflict, message: "ç”¨æˆ·åå·²å­˜åœ¨, å¦‚æœ‰ç–‘é—®, è¯·è”ç³»ç®¡ç†å‘˜.");
                 }
             }
             if (!user.Email.IsNullOrEmpty())
@@ -46,7 +46,7 @@ namespace Geex.Common.Identity.Api.Aggregates.Users
                 var emailConflict = DbContext.Queryable<User>().Any(o => o.Email == user.Email);
                 if (emailConflict)
                 {
-                    throw new BusinessException(GeexExceptionType.Conflict, message: "×¢²áµÄÓÊÏäÒÑ´æÔÚ, ÈçÓĞÒÉÎÊ, ÇëÁªÏµ¹ÜÀíÔ±.");
+                    throw new BusinessException(GeexExceptionType.Conflict, message: "æ³¨å†Œçš„é‚®ç®±å·²å­˜åœ¨, å¦‚æœ‰ç–‘é—®, è¯·è”ç³»ç®¡ç†å‘˜.");
                 }
             }
             if (!user.PhoneNumber.IsNullOrEmpty())
@@ -54,7 +54,7 @@ namespace Geex.Common.Identity.Api.Aggregates.Users
                 var phoneConflict = DbContext.Queryable<User>().Any(o => o.PhoneNumber == user.PhoneNumber);
                 if (phoneConflict)
                 {
-                    throw new BusinessException(GeexExceptionType.Conflict, message: "×¢²áµÄÊÖ»úºÅÒÑ´æÔÚ, ÈçÓĞÒÉÎÊ, ÇëÁªÏµ¹ÜÀíÔ±.");
+                    throw new BusinessException(GeexExceptionType.Conflict, message: "æ³¨å†Œçš„æ‰‹æœºå·å·²å­˜åœ¨, å¦‚æœ‰ç–‘é—®, è¯·è”ç³»ç®¡ç†å‘˜.");
                 }
             }
         }

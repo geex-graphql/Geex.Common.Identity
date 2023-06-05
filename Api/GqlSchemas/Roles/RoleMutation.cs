@@ -33,5 +33,12 @@ namespace Geex.Common.Identity.Api.GqlSchemas.Roles
         {
             return await _mediator.Send(input);
         }
+
+         public async Task<bool> SetRoleDefault(
+            SetRoleDefaultInput input)
+        {
+            await _mediator.Send(input);
+            return true;
+        }
     }
 }
